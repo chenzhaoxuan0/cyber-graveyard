@@ -1,6 +1,6 @@
 /**
  * 墓碑展示卡片（致敬区 / 墓园展厅用）
- * 设计风格：awwwards 式大图展示卡片，强调视觉预览与悬停交互
+ * 大图展示卡片，强调视觉预览与悬停交互
  */
 import { ArrowUpRight } from 'lucide-react'
 import { TombstoneIllustration } from './TombstoneIllustration'
@@ -11,6 +11,19 @@ interface TombstoneCardProps {
   epitaph: string
   /** 主题色 token：candle | jade | blood | bronze | neon-cyan | neon-magenta */
   accent: string
+  /** 墓碑造型变体 */
+  variant?:
+    | 'default'
+    | 'dumbledore'
+    | 'daiyu'
+    | 'prince'
+    | 'wukong'
+    | 'quixote'
+    | 'huian-stone'
+    | 'huizhou-brick'
+    | 'suzhou-stele'
+    | 'miao-silver'
+    | 'yi-lacquer'
   /** 分类标签，如 文学IP / 非遗工艺 */
   category?: string
   /** 额外徽章文字，如 5位角色 / 5种工艺 */
@@ -27,7 +40,7 @@ const ACCENT_MAP: Record<string, { hex: string; glow: string; text: string; soft
   'neon-magenta': { hex: '#b88aa3', glow: 'rgba(184,138,163,0.22)', text: 'text-neon-magenta', soft: 'bg-neon-magenta/10' },
 }
 
-export function TombstoneCard({ title, subtitle, epitaph, accent, category, badge }: TombstoneCardProps) {
+export function TombstoneCard({ title, subtitle, epitaph, accent, variant, category, badge }: TombstoneCardProps) {
   const c = ACCENT_MAP[accent] ?? ACCENT_MAP.candle
 
   return (
@@ -47,7 +60,7 @@ export function TombstoneCard({ title, subtitle, epitaph, accent, category, badg
 
         {/* 简化墓碑插画 */}
         <div className="absolute inset-0 flex items-end justify-center pb-4">
-          <TombstoneIllustration className="h-[72%] w-auto transition-transform duration-700 ease-out-quart group-hover:scale-[1.03]" />
+          <TombstoneIllustration variant={variant} className="h-[72%] w-auto transition-transform duration-700 ease-out-quart group-hover:scale-[1.03]" />
         </div>
 
         {/* 顶部徽章 */}

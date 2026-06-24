@@ -1,5 +1,6 @@
 import { Link } from 'react-router-dom'
 import { BookOpen, Hammer, Sparkles, ArrowRight, Flower2 } from 'lucide-react'
+import { TombstoneIllustration } from '@/components/tombstone/TombstoneIllustration'
 
 const entryCards = [
   {
@@ -85,33 +86,45 @@ function GardenVineRight() {
   )
 }
 
-/** 墓碑简笔画：花园里的一块石碑 */
-function TombstoneInGarden() {
+/** 首屏墓碑群：花园里错落生长的多块石碑 */
+function TombstoneCluster() {
   return (
-    <svg
-      className="mx-auto h-32 w-32 text-stone-400/80 sm:h-40 sm:w-40"
-      viewBox="0 0 160 180"
-      fill="none"
-      aria-hidden="true"
-    >
-      {/* 底座草地 */}
-      <ellipse cx="80" cy="165" rx="70" ry="12" fill="var(--color-jade)" opacity="0.25" />
-      {/* 碑身 */}
-      <path
-        d="M50 160 L50 60 C50 38 62 22 80 22 C98 22 110 38 110 60 L110 160"
-        fill="var(--color-stone-200)"
-        stroke="var(--color-stone-400)"
-        strokeWidth="2.5"
-      />
-      {/* 碑文横线 */}
-      <line x1="65" y1="75" x2="95" y2="75" stroke="var(--color-stone-400)" strokeWidth="2" strokeLinecap="round" />
-      <line x1="62" y1="90" x2="98" y2="90" stroke="var(--color-stone-400)" strokeWidth="2" strokeLinecap="round" />
-      <line x1="68" y1="105" x2="92" y2="105" stroke="var(--color-stone-400)" strokeWidth="2" strokeLinecap="round" />
-      {/* 小花 */}
-      <circle cx="35" cy="155" r="4" fill="var(--color-neon-magenta)" opacity="0.7" />
-      <circle cx="125" cy="158" r="3.5" fill="var(--color-candle)" opacity="0.7" />
-      <circle cx="115" cy="148" r="3" fill="var(--color-jade)" opacity="0.6" />
-    </svg>
+    <div className="relative mx-auto h-36 w-72 sm:h-44 sm:w-96" aria-hidden="true">
+      {/* 草地 */}
+      <div className="absolute bottom-2 left-1/2 h-4 w-[90%] -translate-x-1/2 rounded-[100%] bg-jade/15 blur-sm" />
+
+      {/* 左侧：孙悟空柱碑 */}
+      <div className="absolute bottom-0 left-2 h-28 w-20 sm:left-6 sm:h-36 sm:w-24">
+        <TombstoneIllustration variant="wukong" className="h-full w-full" />
+      </div>
+
+      {/* 中间：林黛玉诗卷碑（最高） */}
+      <div className="absolute bottom-0 left-1/2 z-10 h-36 w-24 -translate-x-1/2 sm:h-44 sm:w-28">
+        <TombstoneIllustration variant="daiyu" className="h-full w-full" />
+      </div>
+
+      {/* 右侧：小王子小行星碑 */}
+      <div className="absolute bottom-0 right-2 h-24 w-20 sm:right-6 sm:h-28 sm:w-24">
+        <TombstoneIllustration variant="prince" className="h-full w-full" />
+      </div>
+
+      {/* 中后：邓布利多魔法塔碑 */}
+      <div className="absolute bottom-0 left-[22%] z-0 h-28 w-16 opacity-80 sm:left-[26%] sm:h-32 sm:w-20">
+        <TombstoneIllustration variant="dumbledore" className="h-full w-full" />
+      </div>
+
+      {/* 中后右：惠安石雕厚重碑 */}
+      <div className="absolute bottom-0 right-[20%] z-0 h-28 w-16 opacity-80 sm:right-[24%] sm:h-32 sm:w-20">
+        <TombstoneIllustration variant="huian-stone" className="h-full w-full" />
+      </div>
+
+      {/* 飘落花瓣装饰 */}
+      <svg className="pointer-events-none absolute inset-0" viewBox="0 0 288 176" fill="none">
+        <circle cx="40" cy="40" r="3" fill="var(--color-neon-magenta)" opacity="0.5" />
+        <circle cx="250" cy="60" r="2.5" fill="var(--color-candle)" opacity="0.5" />
+        <circle cx="220" cy="30" r="2" fill="var(--color-jade)" opacity="0.45" />
+      </svg>
+    </div>
   )
 }
 
@@ -140,7 +153,7 @@ export default function HomePage() {
 
           {/* 墓碑插画 */}
           <div className="mb-6">
-            <TombstoneInGarden />
+            <TombstoneCluster />
           </div>
 
           {/* 主标题 */}

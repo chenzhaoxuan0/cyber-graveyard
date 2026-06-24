@@ -4,6 +4,23 @@ import { ArrowLeft, Hammer, Info, ChevronDown, ChevronUp, ArrowUpRight } from 'l
 import { HERITAGE_CRAFT_TOMBSTONES } from '@/data/tombstones'
 import { TombstoneIllustration } from '@/components/tombstone/TombstoneIllustration'
 
+function mapCraftToVariant(
+  id: string,
+):
+  | 'default'
+  | 'huian-stone'
+  | 'huizhou-brick'
+  | 'suzhou-stele'
+  | 'miao-silver'
+  | 'yi-lacquer' {
+  if (id.includes('huian')) return 'huian-stone'
+  if (id.includes('huizhou')) return 'huizhou-brick'
+  if (id.includes('suzhou')) return 'suzhou-stele'
+  if (id.includes('miao')) return 'miao-silver'
+  if (id.includes('yi')) return 'yi-lacquer'
+  return 'default'
+}
+
 export default function HeritagePage() {
   const [activeCraft, setActiveCraft] = useState<string | null>(null)
 
@@ -59,7 +76,7 @@ export default function HeritagePage() {
 
                 {/* 简化墓碑插画 */}
                 <div className="absolute inset-0 flex items-end justify-center pb-4">
-                  <TombstoneIllustration className="h-[72%] w-auto transition-transform duration-700 ease-out-quart group-hover:scale-[1.03]" />
+                  <TombstoneIllustration variant={mapCraftToVariant(craft.id)} className="h-[72%] w-auto transition-transform duration-700 ease-out-quart group-hover:scale-[1.03]" />
                 </div>
 
                 {/* 徽章 */}

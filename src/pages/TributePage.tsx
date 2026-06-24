@@ -24,6 +24,7 @@ export default function TributePage() {
         subtitle: t.work,
         epitaph: t.epitaph,
         accent: mapStyleToAccent(t.style),
+        variant: mapStyleToVariant(t.style),
         category: '文学 IP',
         badge: t.role,
       })),
@@ -39,6 +40,7 @@ export default function TributePage() {
         subtitle: t.region,
         epitaph: '匠人之心，金石可镂',
         accent: 'jade' as const,
+        variant: mapCraftToVariant(t.id),
         category: '非遗工艺',
         badge: `${t.templates.length} 款样式`,
       })),
@@ -67,7 +69,7 @@ export default function TributePage() {
             墓园展厅
           </h1>
           <p className="max-w-lg font-serif text-base leading-relaxed text-mist-soft sm:text-lg">
-            每一块墓碑都是一则被定格的故事，像 awwwards 的获奖作品一样，安静等待被阅读。
+            每一块墓碑都是一则被定格的故事，安静等待被阅读。
           </p>
         </div>
 
@@ -127,6 +129,7 @@ export default function TributePage() {
               subtitle={item.subtitle}
               epitaph={item.epitaph}
               accent={item.accent}
+              variant={item.variant}
               category={item.category}
               badge={item.badge}
             />
@@ -182,4 +185,40 @@ function mapStyleToAccent(style: string): string {
   if (style.includes('wukong')) return 'bronze'
   if (style.includes('quixote')) return 'blood'
   return 'candle'
+}
+
+/** 将文学 IP 的 style token 映射为墓碑造型变体 */
+function mapStyleToVariant(
+  style: string,
+):
+  | 'default'
+  | 'dumbledore'
+  | 'daiyu'
+  | 'prince'
+  | 'wukong'
+  | 'quixote' {
+  if (style.includes('dumbledore')) return 'dumbledore'
+  if (style.includes('daiyu')) return 'daiyu'
+  if (style.includes('prince')) return 'prince'
+  if (style.includes('wukong')) return 'wukong'
+  if (style.includes('quixote')) return 'quixote'
+  return 'default'
+}
+
+/** 将非遗工艺 id 映射为墓碑造型变体 */
+function mapCraftToVariant(
+  id: string,
+):
+  | 'default'
+  | 'huian-stone'
+  | 'huizhou-brick'
+  | 'suzhou-stele'
+  | 'miao-silver'
+  | 'yi-lacquer' {
+  if (id.includes('huian')) return 'huian-stone'
+  if (id.includes('huizhou')) return 'huizhou-brick'
+  if (id.includes('suzhou')) return 'suzhou-stele'
+  if (id.includes('miao')) return 'miao-silver'
+  if (id.includes('yi')) return 'yi-lacquer'
+  return 'default'
 }
