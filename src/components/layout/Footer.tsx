@@ -1,42 +1,42 @@
 import { Link } from 'react-router-dom'
-import { Download, Heart, Shield } from 'lucide-react'
+import { Download, Heart, Shield, Flower2 } from 'lucide-react'
 
 const footerLinkClass =
-  'rounded-sm px-1 py-0.5 text-mist-dim transition-base hover:text-mist focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-candle focus-visible:ring-offset-2 focus-visible:ring-offset-ink-soft'
+  'rounded-sm px-1 py-0.5 text-mist-dim transition-base hover:text-mist focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-jade focus-visible:ring-offset-2 focus-visible:ring-offset-ink-soft'
 
 export function Footer() {
   return (
     <footer
       id="site-footer"
-      className="border-t border-ink-card bg-ink-soft/80 backdrop-blur"
+      className="border-t border-ink-border bg-ink-soft/70 backdrop-blur"
     >
       <div className="mx-auto max-w-6xl px-4 py-8 sm:py-10">
         {/* 免责声明 */}
         <section
           aria-labelledby="footer-disclaimer-heading"
-          className="mb-5 rounded-lg border border-blood-soft/40 bg-ink-card/60 p-4 shadow-tomb"
+          className="mb-5 rounded-xl border border-ink-border bg-ink-card/60 p-4 shadow-tomb"
         >
           <div className="mb-2 flex items-center gap-2">
-            <Shield className="h-4 w-4 shrink-0 text-blood" aria-hidden="true" />
-            <h2 id="footer-disclaimer-heading" className="font-serif text-sm font-medium text-candle">
+            <Shield className="h-4 w-4 shrink-0 text-jade" aria-hidden="true" />
+            <h2 id="footer-disclaimer-heading" className="font-serif text-sm font-medium text-mist">
               免责声明
             </h2>
           </div>
           <p className="text-xs leading-relaxed text-mist-soft">
             「赛博墓园」是一个面向生者的娱乐创作平台，所有墓碑、墓志铭均为用户即兴创作，不代表真实死亡事件。
             本站不提供 AI 生成内容、不存储用户数据、不进行风险内容检测。如果你此刻正经历情绪困扰，
-            请记得有人愿意听你说话——下方心理援助热线 24 小时在线。
+            请点击右下角帮助按钮或下载下方心理援助热线表。
           </p>
         </section>
 
         {/* 心理援助热线下载 */}
         <section
           aria-labelledby="footer-hotline-heading"
-          className="mb-6 rounded-lg border border-jade-soft/40 bg-ink-card/60 p-4 shadow-tomb"
+          className="mb-6 rounded-xl border border-ink-border bg-ink-card/60 p-4 shadow-tomb"
         >
           <div className="mb-2 flex items-center gap-2">
             <Heart className="h-4 w-4 shrink-0 text-jade" aria-hidden="true" />
-            <h2 id="footer-hotline-heading" className="font-serif text-sm font-medium text-candle">
+            <h2 id="footer-hotline-heading" className="font-serif text-sm font-medium text-mist">
               心理援助热线
             </h2>
           </div>
@@ -46,7 +46,7 @@ export function Footer() {
           <a
             href="/心理援助热线.csv"
             download="心理援助热线.csv"
-            className="inline-flex items-center gap-2 rounded-md border border-jade/60 bg-jade-soft/20 px-3 py-1.5 text-xs font-medium text-jade transition-base hover:border-jade hover:bg-jade-soft/40 hover:shadow-jade focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-jade focus-visible:ring-offset-2 focus-visible:ring-offset-ink-soft"
+            className="inline-flex items-center gap-2 rounded-md border border-jade/50 bg-jade/10 px-3 py-1.5 text-xs font-medium text-jade transition-base hover:border-jade hover:bg-jade/15 hover:shadow-jade focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-jade focus-visible:ring-offset-2 focus-visible:ring-offset-ink-soft"
           >
             <Download className="h-3.5 w-3.5" aria-hidden="true" />
             下载心理援助热线表（CSV）
@@ -54,7 +54,7 @@ export function Footer() {
         </section>
 
         {/* 链接区 */}
-        <div className="flex flex-col gap-3 border-t border-ink-card pt-4 text-xs text-mist-dim sm:flex-row sm:items-center sm:justify-between">
+        <div className="flex flex-col gap-3 border-t border-ink-border pt-4 text-xs text-mist-dim sm:flex-row sm:items-center sm:justify-between">
           <nav aria-label="页脚导航" className="flex flex-wrap items-center gap-2">
             <Link to="/" className={footerLinkClass}>
               首页
@@ -79,8 +79,9 @@ export function Footer() {
               用户协议
             </a>
           </nav>
-          <div className="font-mono text-mist-muted">
-            © 2026 赛博墓园 · 热爱你的生活
+          <div className="flex items-center gap-1.5 font-serif text-mist-muted">
+            <Flower2 className="h-3.5 w-3.5 text-jade" aria-hidden="true" />
+            <span>© 2026 赛博墓园 · 热爱你的生活</span>
           </div>
         </div>
       </div>

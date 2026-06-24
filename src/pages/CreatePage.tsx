@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'react'
+import { useState } from 'react'
 import { Link, useSearchParams, useNavigate } from 'react-router-dom'
 import { ArrowLeft, AlertTriangle, Eye, Sparkles, CheckCircle2, PenLine, LayoutTemplate } from 'lucide-react'
 import { TEMPLATES } from '@/data/tombstones'
@@ -22,20 +22,20 @@ function StepSection({ number, title, description, icon, isActive, isComplete, c
   return (
     <section
       className={cn(
-        'rounded-md border bg-ink-soft/40 p-5 shadow-tomb transition-base sm:p-6',
-        isActive ? 'border-candle/30' : 'border-ink-border',
+        'rounded-xl border bg-ink-card/60 p-5 shadow-tomb transition-base sm:p-6',
+        isActive ? 'border-jade/30' : 'border-ink-border',
         isComplete && 'border-jade/20'
       )}
     >
       <div className="mb-4 flex items-start gap-3">
         <div
           className={cn(
-            'inline-flex h-8 w-8 shrink-0 items-center justify-center rounded-md border text-sm font-bold transition-base',
+            'inline-flex h-8 w-8 shrink-0 items-center justify-center rounded-lg border text-sm font-bold transition-base',
             isComplete
               ? 'border-jade/40 bg-jade/15 text-jade'
               : isActive
-                ? 'border-candle/50 bg-candle/15 text-candle'
-                : 'border-ink-border bg-ink-card text-mist-dim'
+                ? 'border-jade/50 bg-jade/10 text-jade'
+                : 'border-ink-border bg-ink-soft text-mist-dim'
           )}
           aria-hidden="true"
         >
@@ -60,13 +60,8 @@ export default function CreatePage() {
   const form = useAppStore((s) => s.form)
   const setForm = useAppStore((s) => s.setForm)
   const [selectedTemplate, setSelectedTemplate] = useState<string>(
-    searchParams.get('template') || TEMPLATES[0].id,
+    () => searchParams.get('template') || TEMPLATES[0].id,
   )
-
-  useEffect(() => {
-    const t = searchParams.get('template')
-    if (t) setSelectedTemplate(t)
-  }, [searchParams])
 
   const hasEpitaph = form.epitaph.trim().length > 0
   const canPreview = hasEpitaph && form.epitaph.length <= 50
@@ -101,7 +96,7 @@ export default function CreatePage() {
             本地创作 · 数据不上传
           </div>
         </div>
-        <h1 className="text-center font-serif text-2xl text-candle sm:text-3xl">做 我 的 墓 碑</h1>
+        <h1 className="text-center font-serif text-2xl text-mist sm:text-3xl">做 我 的 墓 碑</h1>
         <p className="mt-2 text-center text-xs text-mist-dim sm:text-sm">
           选一方碑，留一句话。所有内容仅保存在你的浏览器中。
         </p>
@@ -137,7 +132,7 @@ export default function CreatePage() {
       </StepSection>
 
       {/* 底部操作栏 */}
-      <div className="fixed inset-x-0 bottom-12 z-30 border-t border-ink-border bg-ink-soft/95 pb-3 pt-3 backdrop-blur sm:bottom-12">
+      <div className="fixed inset-x-0 bottom-0 z-30 border-t border-ink-border bg-ink-card/95 pb-3 pt-3 backdrop-blur">
         <div className="mx-auto flex max-w-4xl flex-col gap-3 px-4 sm:flex-row sm:items-center sm:justify-between">
           {/* 状态提示 */}
           <div className="flex items-center gap-2 text-xs sm:text-sm">

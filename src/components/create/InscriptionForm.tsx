@@ -32,7 +32,7 @@ export function InscriptionForm() {
   const epitaphError = form.epitaph.length > 0 && form.epitaph.trim().length === 0
 
   const inputBase =
-    'w-full rounded-lg border bg-ink/60 px-3.5 py-2.5 text-sm text-mist placeholder:text-mist-dim/50 transition-base focus:border-candle/60 focus:outline-none focus:ring-1 focus:ring-candle/30 disabled:opacity-40'
+    'w-full rounded-xl border bg-ink-card px-3.5 py-2.5 text-sm text-mist placeholder:text-mist-dim/60 transition-base focus:border-jade/60 focus:outline-none focus:ring-1 focus:ring-jade/30 disabled:opacity-40'
 
   return (
     <div className="space-y-5">
@@ -67,7 +67,7 @@ export function InscriptionForm() {
             'resize-none font-serif leading-relaxed',
             epitaphError
               ? 'border-blood/60 focus:border-blood/60 focus:ring-blood/30'
-              : 'border-ink-card'
+              : 'border-ink-border'
           )}
         />
         {epitaphError && (
@@ -92,7 +92,7 @@ export function InscriptionForm() {
           value={form.lifespan}
           onChange={(e) => setForm({ lifespan: e.target.value.slice(0, 30) })}
           placeholder="1990 – 20??"
-          className={cn(inputBase, 'font-mono', 'border-ink-card')}
+          className={cn(inputBase, 'font-mono', 'border-ink-border')}
         />
       </div>
 
@@ -121,13 +121,13 @@ export function InscriptionForm() {
             }}
             placeholder="如：某账号、某作品、某段回忆"
             disabled={form.digitalAssets.length >= MAX_ASSETS}
-            className={cn(inputBase, 'border-ink-card')}
+            className={cn(inputBase, 'border-ink-border')}
           />
           <button
             type="button"
             onClick={addAsset}
             disabled={!assetInput.trim() || form.digitalAssets.length >= MAX_ASSETS}
-            className="inline-flex h-10 w-10 shrink-0 items-center justify-center rounded-lg border border-jade/40 bg-jade-soft/20 text-jade transition-base focus-visible:ring-2 focus-visible:ring-jade focus-visible:ring-offset-2 focus-visible:ring-offset-ink enabled:hover:bg-jade-soft/40 disabled:opacity-30"
+            className="inline-flex h-10 w-10 shrink-0 items-center justify-center rounded-xl border border-jade/40 bg-jade/10 text-jade transition-base focus-visible:ring-2 focus-visible:ring-jade focus-visible:ring-offset-2 focus-visible:ring-offset-ink-card enabled:hover:bg-jade/20 disabled:opacity-30"
             aria-label="添加数字遗产"
           >
             <Plus className="h-4 w-4" />
@@ -138,7 +138,7 @@ export function InscriptionForm() {
             {form.digitalAssets.map((a, i) => (
               <li
                 key={`${a}-${i}`}
-                className="flex items-center justify-between gap-2 rounded-lg border border-ink-card bg-ink-soft/60 px-3 py-2 text-xs text-mist-soft"
+                className="flex items-center justify-between gap-2 rounded-xl border border-ink-border bg-ink-soft/60 px-3 py-2 text-xs text-mist-soft"
               >
                 <span className="truncate">· {a}</span>
                 <button
@@ -166,7 +166,7 @@ export function InscriptionForm() {
           value={form.passerbyMessage}
           onChange={(e) => setForm({ passerbyMessage: e.target.value.slice(0, 30) })}
           placeholder="如：谢谢你停下来看我"
-          className={cn(inputBase, 'border-ink-card font-serif')}
+          className={cn(inputBase, 'border-ink-border font-serif')}
         />
       </div>
     </div>

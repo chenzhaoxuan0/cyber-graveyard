@@ -1,7 +1,6 @@
 import { Suspense, lazy } from 'react'
 import { Routes, Route, Outlet } from 'react-router-dom'
-import { TopBar } from '@/components/layout/TopBar'
-import { BottomHelpBar } from '@/components/layout/BottomHelpBar'
+import { HelpButton } from '@/components/layout/HelpButton'
 import { Footer } from '@/components/layout/Footer'
 
 const HomePage = lazy(() => import('@/pages/HomePage'))
@@ -25,15 +24,14 @@ function PageFallback() {
 
 function Layout() {
   return (
-    <div className="flex min-h-screen flex-col bg-grain">
-      <TopBar />
+    <div className="flex min-h-screen flex-col bg-garden bg-noise text-mist">
       <main className="flex-1">
         <Suspense fallback={<PageFallback />}>
           <Outlet />
         </Suspense>
       </main>
       <Footer />
-      <BottomHelpBar />
+      <HelpButton />
     </div>
   )
 }

@@ -1,12 +1,12 @@
 import { Link, useParams } from 'react-router-dom'
-import { ArrowLeft, Moon, Package, Film, MessageSquare, Sparkles } from 'lucide-react'
+import { ArrowLeft, Package, Film, MessageSquare, Sparkles } from 'lucide-react'
 import { LITERARY_IP_TOMBSTONES } from '@/data/tombstones'
 import { TombstoneVisual } from '@/components/tombstone/TombstoneVisual'
 import { QuoteBubble } from '@/components/tombstone/QuoteBubble'
 
 export default function LiteraryDetailPage() {
   const { id } = useParams<{ id: string }>()
-  const nightMode = true // 默认夜间模式，与赛博墓园主题一致
+  const nightMode = false // 童话花园日间模式
   const tombstone = LITERARY_IP_TOMBSTONES.find((t) => t.id === id)
 
   if (!tombstone) {
@@ -32,10 +32,7 @@ export default function LiteraryDetailPage() {
           返回致敬区
         </Link>
         <h1 className="font-serif text-xl tracking-[0.2em] text-candle">文 学 IP 墓 碑</h1>
-        <div className="inline-flex items-center gap-1.5 rounded border border-mist-dim/40 px-2 py-1 text-xs text-mist-soft">
-          <Moon className="h-3 w-3 text-candle" aria-hidden="true" />
-          夜间模式
-        </div>
+        <span className="w-16" />
       </div>
 
       <div className="grid grid-cols-1 gap-6 lg:grid-cols-2">

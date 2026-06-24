@@ -13,12 +13,12 @@ interface TombstoneCardProps {
 
 /** 将主题 token 映射为具体色值，避免向 inline style 传入无效颜色字符串 */
 const ACCENT_MAP: Record<string, { hex: string; glow: string; text: string }> = {
-  candle: { hex: '#f6c547', glow: 'rgba(246,197,71,0.18)', text: 'text-candle' },
-  jade: { hex: '#4f8c60', glow: 'rgba(79,140,96,0.18)', text: 'text-jade' },
-  blood: { hex: '#9b1c1c', glow: 'rgba(155,28,28,0.18)', text: 'text-blood' },
+  candle: { hex: '#c9985d', glow: 'rgba(201,152,93,0.18)', text: 'text-candle' },
+  jade: { hex: '#6b8e6b', glow: 'rgba(107,142,107,0.18)', text: 'text-jade' },
+  blood: { hex: '#a65d6d', glow: 'rgba(166,93,109,0.18)', text: 'text-blood' },
   bronze: { hex: '#9a7844', glow: 'rgba(154,120,68,0.18)', text: 'text-bronze' },
-  'neon-cyan': { hex: '#00fff0', glow: 'rgba(0,255,240,0.18)', text: 'text-neon-cyan' },
-  'neon-magenta': { hex: '#ff00ff', glow: 'rgba(255,0,255,0.18)', text: 'text-neon-magenta' },
+  'neon-cyan': { hex: '#6b9a8f', glow: 'rgba(107,154,143,0.18)', text: 'text-neon-cyan' },
+  'neon-magenta': { hex: '#b88aa3', glow: 'rgba(184,138,163,0.18)', text: 'text-neon-magenta' },
 }
 
 export function TombstoneCard({ title, subtitle, epitaph, accent }: TombstoneCardProps) {

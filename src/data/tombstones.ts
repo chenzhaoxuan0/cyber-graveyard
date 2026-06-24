@@ -3,6 +3,7 @@ import type { TombstoneTemplate, LiteraryIpTombstone, HeritageCraftTombstone, Ho
 /**
  * 墓碑模板列表（US-04 第一步选模板）
  * 三类：非遗工艺 / 文学 IP 同款 / 极简现代
+ * 配色已调整为童话花园中的真实石材质感
  */
 export const TEMPLATES: TombstoneTemplate[] = [
   // —— 非遗工艺类 ——
@@ -11,45 +12,45 @@ export const TEMPLATES: TombstoneTemplate[] = [
     name: '惠安石雕',
     category: 'heritage',
     origin: '福建惠安 · 国家级非遗',
-    palette: { bg: '#2a2a2e', fg: '#e6e6f0', accent: '#8c6d3f', border: '#5a4426' },
+    palette: { bg: '#f0ece3', fg: '#3d3a35', accent: '#8c6d3f', border: '#a8a29e' },
     style: 'stone-classic',
-    thumbnail: 'linear-gradient(135deg, #2a2a2e 0%, #3d3d42 100%)',
+    thumbnail: 'linear-gradient(135deg, #f0ece3 0%, #e0d8c8 100%)',
   },
   {
     id: 'tpl-huizhou-brick',
     name: '徽州砖雕',
     category: 'heritage',
     origin: '安徽徽州 · 国家级非遗',
-    palette: { bg: '#3d2817', fg: '#e6d5b8', accent: '#8c6d3f', border: '#5a4426' },
+    palette: { bg: '#f2ebe3', fg: '#3d3a35', accent: '#8c6d3f', border: '#b8a090' },
     style: 'brick-huizhou',
-    thumbnail: 'linear-gradient(135deg, #3d2817 0%, #5a3d22 100%)',
+    thumbnail: 'linear-gradient(135deg, #f2ebe3 0%, #e2d4c4 100%)',
   },
   {
     id: 'tpl-suzhou-stele',
     name: '苏州碑刻',
     category: 'heritage',
     origin: '江苏苏州 · 国家级非遗',
-    palette: { bg: '#1c1c28', fg: '#e6e6f0', accent: '#4a7c59', border: '#2d5a3d' },
+    palette: { bg: '#e8ede8', fg: '#3d3a35', accent: '#4a7c59', border: '#8a9a8a' },
     style: 'stele-suzhou',
-    thumbnail: 'linear-gradient(135deg, #1c1c28 0%, #2a2a3a 100%)',
+    thumbnail: 'linear-gradient(135deg, #e8ede8 0%, #d8ddd8 100%)',
   },
   {
     id: 'tpl-miao-silver',
     name: '苗族银饰',
     category: 'heritage',
     origin: '贵州黔东南 · 国家级非遗',
-    palette: { bg: '#0f1419', fg: '#e6e6f0', accent: '#c0c0c8', border: '#6a6a72' },
+    palette: { bg: '#e8eaec', fg: '#3d3a35', accent: '#8a929a', border: '#a8a8ae' },
     style: 'silver-miao',
-    thumbnail: 'linear-gradient(135deg, #0f1419 0%, #1a2028 100%)',
+    thumbnail: 'linear-gradient(135deg, #e8eaec 0%, #d8dadf 100%)',
   },
   {
     id: 'tpl-yi-lacquer',
     name: '彝族漆器',
     category: 'heritage',
     origin: '四川凉山 · 国家级非遗',
-    palette: { bg: '#1a0a0a', fg: '#e6d5b8', accent: '#8b1a1a', border: '#5a1010' },
+    palette: { bg: '#f0e8e6', fg: '#3d3a35', accent: '#9b4a4a', border: '#b09088' },
     style: 'lacquer-yi',
-    thumbnail: 'linear-gradient(135deg, #1a0a0a 0%, #2a1010 100%)',
+    thumbnail: 'linear-gradient(135deg, #f0e8e6 0%, #e2d4d0 100%)',
   },
   // —— 文学 IP 同款 ——
   {
@@ -57,45 +58,45 @@ export const TEMPLATES: TombstoneTemplate[] = [
     name: '邓布利多同款',
     category: 'literary',
     origin: '《哈利·波特》· 魔法校长',
-    palette: { bg: '#1a1530', fg: '#e6d5b8', accent: '#f5c542', border: '#8c6d3f' },
+    palette: { bg: '#f4f1ea', fg: '#3d3a35', accent: '#c9985d', border: '#a89070' },
     style: 'literary-dumbledore',
-    thumbnail: 'linear-gradient(135deg, #1a1530 0%, #2a2050 100%)',
+    thumbnail: 'linear-gradient(135deg, #f4f1ea 0%, #e6dfc8 100%)',
   },
   {
     id: 'tpl-daiyu',
     name: '林黛玉同款',
     category: 'literary',
     origin: '《红楼梦》· 潇湘妃子',
-    palette: { bg: '#1c1c28', fg: '#e6e6f0', accent: '#9b6a8c', border: '#5a3d52' },
+    palette: { bg: '#f0eaee', fg: '#3d3a35', accent: '#9b6a8c', border: '#b8a0a8' },
     style: 'literary-daiyu',
-    thumbnail: 'linear-gradient(135deg, #1c1c28 0%, #2a2030 100%)',
+    thumbnail: 'linear-gradient(135deg, #f0eaee 0%, #e4d8e0 100%)',
   },
   {
     id: 'tpl-prince',
     name: '小王子同款',
     category: 'literary',
     origin: '《小王子》· B612 星球',
-    palette: { bg: '#0f1419', fg: '#e6e6f0', accent: '#f5c542', border: '#8c6d3f' },
+    palette: { bg: '#eef2f5', fg: '#3d3a35', accent: '#c9985d', border: '#9a8a6a' },
     style: 'literary-prince',
-    thumbnail: 'linear-gradient(135deg, #0f1419 0%, #1a2030 100%)',
+    thumbnail: 'linear-gradient(135deg, #eef2f5 0%, #dde4eb 100%)',
   },
   {
     id: 'tpl-wukong',
     name: '孙悟空同款',
     category: 'literary',
     origin: '《西游记》· 齐天大圣',
-    palette: { bg: '#1a0a0a', fg: '#e6d5b8', accent: '#f5c542', border: '#8b1a1a' },
+    palette: { bg: '#f5ece4', fg: '#3d3a35', accent: '#c9985d', border: '#9b4a4a' },
     style: 'literary-wukong',
-    thumbnail: 'linear-gradient(135deg, #1a0a0a 0%, #2a1a10 100%)',
+    thumbnail: 'linear-gradient(135deg, #f5ece4 0%, #eaddd0 100%)',
   },
   {
     id: 'tpl-quixote',
     name: '堂吉诃德同款',
     category: 'literary',
     origin: '《堂吉诃德》· 拉曼却骑士',
-    palette: { bg: '#2a2017', fg: '#e6d5b8', accent: '#8b1a1a', border: '#5a1010' },
+    palette: { bg: '#f5ede6', fg: '#3d3a35', accent: '#9b4a4a', border: '#8c6d3f' },
     style: 'literary-quixote',
-    thumbnail: 'linear-gradient(135deg, #2a2017 0%, #3a2a20 100%)',
+    thumbnail: 'linear-gradient(135deg, #f5ede6 0%, #eadcc8 100%)',
   },
   // —— 极简现代 ——
   {
@@ -103,27 +104,27 @@ export const TEMPLATES: TombstoneTemplate[] = [
     name: '极简白',
     category: 'minimal',
     origin: '现代极简 · 留白之美',
-    palette: { bg: '#f5f5f0', fg: '#1c1c28', accent: '#8c6d3f', border: '#a8a8b8' },
+    palette: { bg: '#fafaf8', fg: '#3d3a35', accent: '#8c6d3f', border: '#c8c8c0' },
     style: 'minimal-white',
-    thumbnail: 'linear-gradient(135deg, #f5f5f0 0%, #e6e6e0 100%)',
+    thumbnail: 'linear-gradient(135deg, #fafaf8 0%, #f0f0ec 100%)',
   },
   {
     id: 'tpl-minimal-black',
     name: '极简黑',
     category: 'minimal',
     origin: '现代极简 · 沉默之黑',
-    palette: { bg: '#0a0a0f', fg: '#e6e6f0', accent: '#f5c542', border: '#2a2a3a' },
+    palette: { bg: '#2a2826', fg: '#e7e5e4', accent: '#c9985d', border: '#57534e' },
     style: 'minimal-black',
-    thumbnail: 'linear-gradient(135deg, #0a0a0f 0%, #1a1a24 100%)',
+    thumbnail: 'linear-gradient(135deg, #2a2826 0%, #3a3834 100%)',
   },
   {
     id: 'tpl-minimal-jade',
     name: '极简青',
     category: 'minimal',
     origin: '现代极简 · 青瓷之韵',
-    palette: { bg: '#1a2a24', fg: '#e6e6f0', accent: '#4a7c59', border: '#2d5a3d' },
+    palette: { bg: '#e8eee9', fg: '#3d3a35', accent: '#4a7c59', border: '#8a9a8a' },
     style: 'minimal-jade',
-    thumbnail: 'linear-gradient(135deg, #1a2a24 0%, #2a3a34 100%)',
+    thumbnail: 'linear-gradient(135deg, #e8eee9 0%, #d8e0d8 100%)',
   },
 ]
 
@@ -147,7 +148,7 @@ export const LITERARY_IP_TOMBSTONES: LiteraryIpTombstone[] = [
     ],
     deathScene: '被斯内普在天文塔用阿瓦达索命咒击中后坠落，按其本人预先安排执行。',
     style: 'literary-dumbledore',
-    palette: { bg: '#1a1530', fg: '#e6d5b8', accent: '#f5c542', border: '#8c6d3f' },
+    palette: { bg: '#f4f1ea', fg: '#3d3a35', accent: '#c9985d', border: '#a89070' },
   },
   {
     id: 'ip-daiyu',
@@ -165,7 +166,7 @@ export const LITERARY_IP_TOMBSTONES: LiteraryIpTombstone[] = [
     ],
     deathScene: '于贾宝玉与薛宝钗成婚之夜，焚毁诗稿，泪尽而逝于潇湘馆。',
     style: 'literary-daiyu',
-    palette: { bg: '#1c1c28', fg: '#e6e6f0', accent: '#9b6a8c', border: '#5a3d52' },
+    palette: { bg: '#f0eaee', fg: '#3d3a35', accent: '#9b6a8c', border: '#b8a0a8' },
   },
   {
     id: 'ip-prince',
@@ -183,7 +184,7 @@ export const LITERARY_IP_TOMBSTONES: LiteraryIpTombstone[] = [
     ],
     deathScene: '为了让飞行员回到他的飞机，让蛇咬伤自己，肉身倒下，灵魂回到 B612。',
     style: 'literary-prince',
-    palette: { bg: '#0f1419', fg: '#e6e6f0', accent: '#f5c542', border: '#8c6d3f' },
+    palette: { bg: '#eef2f5', fg: '#3d3a35', accent: '#c9985d', border: '#9a8a6a' },
   },
   {
     id: 'ip-wukong',
@@ -201,7 +202,7 @@ export const LITERARY_IP_TOMBSTONES: LiteraryIpTombstone[] = [
     ],
     deathScene: '取经功成，被封为斗战胜佛，肉身成圣，不入轮回。',
     style: 'literary-wukong',
-    palette: { bg: '#1a0a0a', fg: '#e6d5b8', accent: '#f5c542', border: '#8b1a1a' },
+    palette: { bg: '#f5ece4', fg: '#3d3a35', accent: '#c9985d', border: '#9b4a4a' },
   },
   {
     id: 'ip-quixote',
@@ -219,7 +220,7 @@ export const LITERARY_IP_TOMBSTONES: LiteraryIpTombstone[] = [
     ],
     deathScene: '临终前恢复理智，立下遗嘱，否定骑士小说，平静离世。',
     style: 'literary-quixote',
-    palette: { bg: '#2a2017', fg: '#e6d5b8', accent: '#8b1a1a', border: '#5a1010' },
+    palette: { bg: '#f5ede6', fg: '#3d3a35', accent: '#9b4a4a', border: '#8c6d3f' },
   },
 ]
 
@@ -237,8 +238,8 @@ export const HERITAGE_CRAFT_TOMBSTONES: HeritageCraftTombstone[] = [
       history: '2006 年列入首批国家级非遗名录，被誉为"南派石雕艺术代表"。',
     },
     templates: [
-      { name: '青石古韵', style: 'stone-classic', palette: { bg: '#2a2a2e', fg: '#e6e6f0', accent: '#8c6d3f', border: '#5a4426' } },
-      { name: '影雕墨韵', style: 'stone-classic', palette: { bg: '#1c1c20', fg: '#d5d5d8', accent: '#6a5a3a', border: '#3a3a3e' } },
+      { name: '青石古韵', style: 'stone-classic', palette: { bg: '#f0ece3', fg: '#3d3a35', accent: '#8c6d3f', border: '#a8a29e' } },
+      { name: '影雕墨韵', style: 'stone-classic', palette: { bg: '#e8e4d9', fg: '#3d3a35', accent: '#6a5a4a', border: '#9a9088' } },
     ],
   },
   {
@@ -251,8 +252,8 @@ export const HERITAGE_CRAFT_TOMBSTONES: HeritageCraftTombstone[] = [
       history: '2006 年列入国家级非遗，是徽派建筑"三雕"之一。',
     },
     templates: [
-      { name: '徽派门楼', style: 'brick-huizhou', palette: { bg: '#3d2817', fg: '#e6d5b8', accent: '#8c6d3f', border: '#5a4426' } },
-      { name: '九层透雕', style: 'brick-huizhou', palette: { bg: '#2a1c10', fg: '#d5b888', accent: '#6a4a26', border: '#3a2810' } },
+      { name: '徽派门楼', style: 'brick-huizhou', palette: { bg: '#f2ebe3', fg: '#3d3a35', accent: '#8c6d3f', border: '#b8a090' } },
+      { name: '九层透雕', style: 'brick-huizhou', palette: { bg: '#e8ded4', fg: '#3d3a35', accent: '#6a4a3a', border: '#a89080' } },
     ],
   },
   {
@@ -265,8 +266,8 @@ export const HERITAGE_CRAFT_TOMBSTONES: HeritageCraftTombstone[] = [
       history: '2007 年列入国家级非遗，与苏州园林、苏州评弹并称"苏州三绝"。',
     },
     templates: [
-      { name: '文庙古碑', style: 'stele-suzhou', palette: { bg: '#1c1c28', fg: '#e6e6f0', accent: '#4a7c59', border: '#2d5a3d' } },
-      { name: '瘦金体韵', style: 'stele-suzhou', palette: { bg: '#14141c', fg: '#d5d5e0', accent: '#3a6a4a', border: '#1a3a2a' } },
+      { name: '文庙古碑', style: 'stele-suzhou', palette: { bg: '#e8ede8', fg: '#3d3a35', accent: '#4a7c59', border: '#8a9a8a' } },
+      { name: '瘦金体韵', style: 'stele-suzhou', palette: { bg: '#dde4dd', fg: '#3d3a35', accent: '#3a6a4a', border: '#7a8a7a' } },
     ],
   },
   {
@@ -279,8 +280,8 @@ export const HERITAGE_CRAFT_TOMBSTONES: HeritageCraftTombstone[] = [
       history: '2006 年列入首批国家级非遗，是苗族"穿在身上的史书"。',
     },
     templates: [
-      { name: '蝴蝶妈妈', style: 'silver-miao', palette: { bg: '#0f1419', fg: '#e6e6f0', accent: '#c0c0c8', border: '#6a6a72' } },
-      { name: '银冠华彩', style: 'silver-miao', palette: { bg: '#0a0f14', fg: '#d5d5e0', accent: '#a0a0a8', border: '#4a4a52' } },
+      { name: '蝴蝶妈妈', style: 'silver-miao', palette: { bg: '#e8eaec', fg: '#3d3a35', accent: '#8a929a', border: '#a8a8ae' } },
+      { name: '银冠华彩', style: 'silver-miao', palette: { bg: '#e0e2e6', fg: '#3d3a35', accent: '#a0a0a8', border: '#98989e' } },
     ],
   },
   {
@@ -293,8 +294,8 @@ export const HERITAGE_CRAFT_TOMBSTONES: HeritageCraftTombstone[] = [
       history: '2008 年列入国家级非遗，是彝族"三色文化"的物质载体。',
     },
     templates: [
-      { name: '三色古髹', style: 'lacquer-yi', palette: { bg: '#1a0a0a', fg: '#e6d5b8', accent: '#8b1a1a', border: '#5a1010' } },
-      { name: '火焰纹饰', style: 'lacquer-yi', palette: { bg: '#0f0505', fg: '#d5b888', accent: '#6a1010', border: '#3a0808' } },
+      { name: '三色古髹', style: 'lacquer-yi', palette: { bg: '#f0e8e6', fg: '#3d3a35', accent: '#9b4a4a', border: '#b09088' } },
+      { name: '火焰纹饰', style: 'lacquer-yi', palette: { bg: '#f0e4e0', fg: '#3d3a35', accent: '#7a3a3a', border: '#a08078' } },
     ],
   },
 ]

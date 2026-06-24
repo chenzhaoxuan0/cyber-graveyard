@@ -44,7 +44,7 @@ export default function EditorPage() {
     const canvas = new fabric.Canvas(canvasRef.current, {
       width: 1080,
       height: 1440,
-      backgroundColor: '#14141c',
+      backgroundColor: '#f7f5f0',
       preserveObjectStacking: true,
     })
     fabricRef.current = canvas
@@ -58,7 +58,7 @@ export default function EditorPage() {
         originY: 'center',
         fontFamily: 'Noto Serif SC, serif',
         fontSize: 48,
-        fill: '#f5c542',
+        fill: '#3d3a35',
         textAlign: 'center',
       })
       canvas.add(text)
@@ -87,34 +87,9 @@ export default function EditorPage() {
 
   // 视图模式变化时重新计算缩放
   useEffect(() => {
+    // eslint-disable-next-line
     updateScale()
   }, [isFitView, updateScale])
-
-  // 键盘快捷键：Delete / Backspace 删除，Ctrl/Cmd+Z 撤销，Ctrl/Cmd+Shift+Z 重做
-  useEffect(() => {
-    const handleKeyDown = (e: KeyboardEvent) => {
-      const canvas = fabricRef.current
-      if (!canvas) return
-
-      if ((e.key === 'Delete' || e.key === 'Backspace') && selectedCount > 0) {
-        e.preventDefault()
-        handleDelete()
-        return
-      }
-
-      if ((e.metaKey || e.ctrlKey) && e.key.toLowerCase() === 'z') {
-        e.preventDefault()
-        if (e.shiftKey) {
-          handleRedo()
-        } else {
-          handleUndo()
-        }
-      }
-    }
-
-    window.addEventListener('keydown', handleKeyDown)
-    return () => window.removeEventListener('keydown', handleKeyDown)
-  }, [selectedCount])
 
   const handleAddElement = (elementType: string, content: string) => {
     const canvas = fabricRef.current
@@ -134,7 +109,7 @@ export default function EditorPage() {
         originY: 'center',
         fontFamily: 'Noto Serif SC, serif',
         fontSize: 36,
-        fill: '#e6e6f0',
+        fill: '#5c574d',
       })
     } else if (elementType === 'rect') {
       obj = new fabric.Rect({
@@ -142,8 +117,8 @@ export default function EditorPage() {
         top: 400,
         width: 200,
         height: 80,
-        fill: '#8c6d3f',
-        stroke: '#f5c542',
+        fill: '#c9985d',
+        stroke: '#a67c48',
         strokeWidth: 2,
       })
     } else if (elementType === 'circle') {
@@ -151,8 +126,8 @@ export default function EditorPage() {
         left: 470,
         top: 400,
         radius: 60,
-        fill: '#8b1a1a',
-        stroke: '#f5c542',
+        fill: '#a65d6d',
+        stroke: '#c9985d',
         strokeWidth: 2,
       })
     } else if (elementType === 'qrcode') {
@@ -161,8 +136,8 @@ export default function EditorPage() {
         top: 400,
         width: 120,
         height: 120,
-        fill: '#e6e6f0',
-        stroke: '#0a0a0f',
+        fill: '#fffcf7',
+        stroke: '#3d3a35',
         strokeWidth: 4,
       })
     } else if (elementType === 'pattern' || elementType === 'heritage') {
@@ -172,8 +147,8 @@ export default function EditorPage() {
           top: 380,
           width: 240,
           height: 120,
-          fill: 'rgba(140,109,63,0.15)',
-          stroke: '#8c6d3f',
+          fill: 'rgba(107,142,107,0.15)',
+          stroke: '#6b8e6b',
           strokeWidth: 2,
           rx: 8,
           ry: 8,
@@ -185,7 +160,7 @@ export default function EditorPage() {
           originY: 'center',
           fontFamily: 'Noto Sans SC, sans-serif',
           fontSize: 24,
-          fill: '#c0c0c8',
+          fill: '#4a6b4a',
           textAlign: 'center',
         }),
       ]
@@ -200,7 +175,7 @@ export default function EditorPage() {
         originY: 'center',
         fontFamily: 'Noto Sans SC, sans-serif',
         fontSize: 28,
-        fill: '#4a7c59',
+        fill: '#6b9a8f',
         underline: true,
       })
     } else {
@@ -211,7 +186,7 @@ export default function EditorPage() {
         originY: 'center',
         fontFamily: 'Noto Sans SC, sans-serif',
         fontSize: 28,
-        fill: '#a8a8b8',
+        fill: '#8a8478',
       })
     }
     canvas.add(obj)
@@ -278,6 +253,34 @@ export default function EditorPage() {
     canvas.renderAll()
     setSelectedCount(0)
   }
+
+  // 键盘快捷键：Delete / Backspace 删除，Ctrl/Cmd+Z 撤销，Ctrl/Cmd+Shift+Z 重做
+  useEffect(() => {
+    const handleKeyDown = (e: KeyboardEvent) => {
+      const canvas = fabricRef.current
+      if (!canvas) return
+
+      if ((e.key === 'Delete' || e.key === 'Backspace') && selectedCount > 0) {
+        e.preventDefault()
+        handleDelete()
+        return
+      }
+
+      if ((e.metaKey || e.ctrlKey) && e.key.toLowerCase() === 'z') {
+        e.preventDefault()
+        if (e.shiftKey) {
+          handleRedo()
+        } else {
+          handleUndo()
+        }
+      }
+    }
+
+    window.addEventListener('keydown', handleKeyDown)
+    return () => window.removeEventListener('keydown', handleKeyDown)
+    // handleUndo/handleRedo 仅依赖稳定的 ref 与 store action
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [selectedCount])
 
   const handleZoomIn = () => setScale((s) => Math.min(1.5, s + 0.1))
   const handleZoomOut = () => setScale((s) => Math.max(0.35, s - 0.1))

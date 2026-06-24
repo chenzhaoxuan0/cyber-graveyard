@@ -1,6 +1,6 @@
 /**
  * 墓碑视觉组件（核心渲染层）
- * 根据 template 选择不同的视觉风格，统一 1080px 宽输出
+ * 童话花园中的真实石质墓碑，统一 1080px 宽输出
  * 用于：致敬区预览、创建预览、导出长图/视频
  */
 import { useMemo } from 'react'
@@ -36,8 +36,35 @@ function resolvePalette(template: string, craft?: string): TombstoneTemplate['pa
   // 4. 按 category 查首个
   const byCategory = TEMPLATES.find((t) => t.category === template)
   if (byCategory) return byCategory.palette
-  // 5. 兜底
-  return { bg: '#0a0a0f', fg: '#e6e6f0', accent: '#f5c542', border: '#2a2a3a' }
+  // 5. 兜底：花园石质
+  return { bg: '#f4f1ea', fg: '#3d3a35', accent: '#8a9a8a', border: '#a8a29e' }
+}
+
+/** 花园底部装饰 */
+function GardenGround({ accent }: { accent: string }) {
+  return (
+    <svg
+      className="pointer-events-none absolute bottom-0 left-0 right-0 h-24 w-full"
+      preserveAspectRatio="none"
+      viewBox="0 0 400 80"
+      aria-hidden="true"
+    >
+      <defs>
+        <linearGradient id="grassGrad" x1="0" y1="0" x2="0" y2="1">
+          <stop offset="0%" stopColor={accent} stopOpacity="0.25" />
+          <stop offset="100%" stopColor={accent} stopOpacity="0.45" />
+        </linearGradient>
+      </defs>
+      <path
+        d="M0 60 Q80 45 160 55 T320 50 T400 58 V80 H0 Z"
+        fill="url(#grassGrad)"
+      />
+      <circle cx="40" cy="58" r="3" fill="#b88aa3" opacity="0.6" />
+      <circle cx="120" cy="52" r="2.5" fill="#c9985d" opacity="0.6" />
+      <circle cx="260" cy="54" r="3" fill="#6b8e6b" opacity="0.5" />
+      <circle cx="340" cy="60" r="2" fill="#b88aa3" opacity="0.5" />
+    </svg>
+  )
 }
 
 export function TombstoneVisual({
@@ -45,38 +72,53 @@ export function TombstoneVisual({
   title,
   subtitle,
   epitaph,
-  nightMode = true,
+  nightMode = false,
   passerbyMessage,
   digitalAssets,
   craft,
 }: TombstoneVisualProps) {
   const palette = useMemo(() => resolvePalette(template, craft), [template, craft])
 
+  // 真实石材色：以灰调为主，可用 accent 做微 tint
+  const stoneBody = '#d6d3d1'
+  const stoneDark = '#a8a29e'
+  const stoneBorder = '#78716c'
+  const stoneShadow = 'rgba(28, 25, 23, 0.18)'
+
+  // 花园背景
+  const gardenBg = nightMode
+    ? 'linear-gradient(180deg, #2a2826 0%, #1c1a18 100%)'
+    : 'linear-gradient(180deg, #f7f5f0 0%, #f0ece3 60%, #e8e4d9 100%)'
+  const textColor = nightMode ? '#e7e5e4' : palette.fg
+
   return (
     <div
       className="relative w-full overflow-hidden"
       style={{
-        background: `linear-gradient(180deg, ${palette.bg} 0%, ${palette.bg}ee 100%)`,
-        color: palette.fg,
+        background: gardenBg,
+        color: textColor,
         minHeight: 600,
       }}
     >
-      {/* 顶部烛光 */}
+      {/* 顶部柔光 */}
       <div
-        className="pointer-events-none absolute -top-20 left-1/2 h-40 w-80 -translate-x-1/2 rounded-full opacity-40 blur-3xl"
+        className="pointer-events-none absolute -top-20 left-1/2 h-40 w-80 -translate-x-1/2 rounded-full opacity-50 blur-3xl"
         style={{ background: palette.accent }}
       />
 
-      {/* 噪点纹理 */}
-      <div className="bg-grain pointer-events-none absolute inset-0 opacity-30" />
+      {/* 纸张/天空纹理 */}
+      <div className="bg-noise pointer-events-none absolute inset-0 opacity-40" />
+
+      {/* 花园底部 */}
+      <GardenGround accent={palette.accent} />
 
       {/* 内容区 */}
-      <div className="relative z-10 flex flex-col items-center px-8 py-12">
+      <div className="relative z-10 flex flex-col items-center px-8 pb-28 pt-12">
         {/* 生卒年 / 标题 */}
         <div className="mb-2 text-center">
           <div
             className="font-serif text-2xl tracking-[0.3em]"
-            style={{ color: palette.fg }}
+            style={{ color: textColor }}
           >
             {title}
           </div>
@@ -89,37 +131,48 @@ export function TombstoneVisual({
           style={{ background: `linear-gradient(90deg, transparent, ${palette.accent}, transparent)` }}
         />
 
-        {/* 墓碑主体 - 优化造型：圆顶 + 两侧装饰 + 底座 */}
+        {/* 墓碑主体：真实石质造型 */}
         <div className="relative my-6 w-full max-w-[420px]">
           {/* 顶部圆球装饰 */}
-          <div className="relative mx-auto mb-[-8px] h-5 w-5 rounded-full border-2 z-10" style={{ borderColor: palette.accent, background: palette.bg }} />
+          <div
+            className="relative z-10 mx-auto mb-[-8px] h-5 w-5 rounded-full border-2"
+            style={{ borderColor: stoneBorder, background: stoneBody }}
+          />
 
           {/* 墓碑碑身 */}
           <div
             className="relative flex min-h-[320px] flex-col items-center justify-center rounded-t-[80px] rounded-b-lg border-2 px-8 py-10 text-center"
             style={{
-              borderColor: palette.border,
-              background: `${palette.bg}aa`,
-              boxShadow: `0 0 40px ${palette.accent}22, inset 0 0 20px ${palette.bg}`,
+              borderColor: stoneBorder,
+              background: `linear-gradient(180deg, ${stoneBody} 0%, ${stoneDark} 100%)`,
+              boxShadow: `0 12px 40px ${stoneShadow}, inset 0 1px 0 rgba(255,255,255,0.45)`,
             }}
           >
             {/* 内边框装饰 */}
             <div
               className="pointer-events-none absolute inset-3 rounded-t-[68px] rounded-b-sm border"
-              style={{ borderColor: `${palette.accent}33` }}
+              style={{ borderColor: `${stoneBorder}66` }}
+            />
+
+            {/* 风化纹理 */}
+            <div
+              className="pointer-events-none absolute inset-0 rounded-t-[80px] rounded-b-lg opacity-20"
+              style={{
+                backgroundImage: `url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noise'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noise)' opacity='0.12'/%3E%3C/svg%3E")`,
+              }}
             />
 
             {/* 墓志铭 */}
             <p
               className="font-serif text-lg leading-relaxed"
-              style={{ color: palette.fg }}
+              style={{ color: textColor, textShadow: '0 1px 0 rgba(255,255,255,0.25)' }}
             >
               {epitaph || '尚未撰写墓志铭'}
             </p>
 
             {/* 数字遗产 */}
             {digitalAssets && digitalAssets.length > 0 && (
-              <div className="mt-6 w-full border-t pt-4" style={{ borderColor: `${palette.border}66` }}>
+              <div className="mt-6 w-full border-t pt-4" style={{ borderColor: `${stoneBorder}66` }}>
                 <div className="mb-2 text-[10px] tracking-widest opacity-60">数 字 遗 产</div>
                 <ul className="space-y-1">
                   {digitalAssets.map((a, i) => (
@@ -133,7 +186,7 @@ export function TombstoneVisual({
 
             {/* 路过者寄语 */}
             {passerbyMessage && (
-              <div className="mt-6 w-full border-t pt-4" style={{ borderColor: `${palette.border}66` }}>
+              <div className="mt-6 w-full border-t pt-4" style={{ borderColor: `${stoneBorder}66` }}>
                 <div className="mb-1 text-[10px] tracking-widest opacity-60">路 过 者</div>
                 <p className="font-serif text-xs italic opacity-80">“{passerbyMessage}”</p>
               </div>
@@ -144,27 +197,23 @@ export function TombstoneVisual({
           <div
             className="mx-auto mt-[-2px] h-3 w-[88%] rounded-b-sm"
             style={{
-              background: `linear-gradient(180deg, ${palette.border}, ${palette.bg})`,
+              background: `linear-gradient(180deg, ${stoneBorder}, ${stoneDark})`,
             }}
           />
           <div
             className="mx-auto h-2 w-[78%] rounded-b-sm opacity-60"
-            style={{ background: palette.border }}
+            style={{ background: stoneBorder }}
           />
         </div>
 
         {/* 底部装饰 */}
         <div
-          className="mt-4 h-px w-48"
+          className="mt-2 h-px w-48"
           style={{ background: `linear-gradient(90deg, transparent, ${palette.accent}88, transparent)` }}
         />
         <div className="mt-3 text-[10px] tracking-[0.4em] opacity-40">
           赛 博 墓 园 · CYBER GRAVEYARD
         </div>
-
-        {!nightMode && (
-          <div className="mt-2 text-[10px] opacity-30">日间模式</div>
-        )}
       </div>
     </div>
   )
