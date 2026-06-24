@@ -10,6 +10,9 @@ const HeritagePage = lazy(() => import('@/pages/HeritagePage'))
 const CreatePage = lazy(() => import('@/pages/CreatePage'))
 const EditorPage = lazy(() => import('@/pages/EditorPage'))
 const PreviewPage = lazy(() => import('@/pages/PreviewPage'))
+const FormsPage = lazy(() => import('@/pages/FormsPage'))
+const FormDetailPage = lazy(() => import('@/pages/FormDetailPage'))
+const CulturePage = lazy(() => import('@/pages/CulturePage'))
 const NotFoundPage = lazy(() => import('@/pages/NotFoundPage'))
 
 function PageFallback() {
@@ -47,6 +50,9 @@ function App() {
         <Route path="create" element={<CreatePage />} />
         <Route path="editor" element={<EditorPage />} />
         <Route path="preview" element={<PreviewPage />} />
+        <Route path="forms" element={<FormsPage />} />
+        <Route path="forms/:id" element={<FormDetailPage />} />
+        <Route path="culture" element={<CulturePage />} />
         <Route path="*" element={<NotFoundPage />} />
       </Route>
     </Routes>

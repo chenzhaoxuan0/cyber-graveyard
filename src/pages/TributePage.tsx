@@ -1,14 +1,14 @@
 import { useState, useMemo } from 'react'
 import { Link } from 'react-router-dom'
 import { ArrowLeft, Hammer, Sparkles, ArrowUpRight } from 'lucide-react'
-import { LITERARY_IP_TOMBSTONES, HERITAGE_CRAFT_TOMBSTONES } from '@/data/tombstones'
+import { getAllLiteraryIpTombstones, HERITAGE_CRAFT_TOMBSTONES } from '@/data/tombstones'
 import { TombstoneCard } from '@/components/tombstone/TombstoneCard'
 
 type FilterTab = 'all' | 'literary' | 'heritage'
 
 const FILTER_TABS: { key: FilterTab; label: string; count: number }[] = [
-  { key: 'all', label: '全部', count: LITERARY_IP_TOMBSTONES.length + HERITAGE_CRAFT_TOMBSTONES.length },
-  { key: 'literary', label: '文学 IP', count: LITERARY_IP_TOMBSTONES.length },
+  { key: 'all', label: '全部', count: getAllLiteraryIpTombstones().length + HERITAGE_CRAFT_TOMBSTONES.length },
+  { key: 'literary', label: '文学 IP', count: getAllLiteraryIpTombstones().length },
   { key: 'heritage', label: '非遗工艺', count: HERITAGE_CRAFT_TOMBSTONES.length },
 ]
 
@@ -17,7 +17,7 @@ export default function TributePage() {
 
   const literaryItems = useMemo(
     () =>
-      LITERARY_IP_TOMBSTONES.map((t) => ({
+      getAllLiteraryIpTombstones().map((t) => ({
         id: t.id,
         to: `/tribute/literary/${t.id}`,
         title: t.character,

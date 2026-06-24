@@ -1,13 +1,13 @@
 import { Link, useParams } from 'react-router-dom'
 import { ArrowLeft, Package, Film, MessageSquare, Sparkles } from 'lucide-react'
-import { LITERARY_IP_TOMBSTONES } from '@/data/tombstones'
+import { getAllLiteraryIpTombstones } from '@/data/tombstones'
 import { TombstoneVisual } from '@/components/tombstone/TombstoneVisual'
 import { QuoteBubble } from '@/components/tombstone/QuoteBubble'
 
 export default function LiteraryDetailPage() {
   const { id } = useParams<{ id: string }>()
   const nightMode = false // 童话花园日间模式
-  const tombstone = LITERARY_IP_TOMBSTONES.find((t) => t.id === id)
+  const tombstone = getAllLiteraryIpTombstones().find((t) => t.id === id)
 
   if (!tombstone) {
     return (

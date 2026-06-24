@@ -1,5 +1,5 @@
 import { Link } from 'react-router-dom'
-import { BookOpen, Hammer, Sparkles, ArrowRight, Flower2 } from 'lucide-react'
+import { BookOpen, Hammer, Sparkles, ArrowRight, Flower2, Globe, Layers, Palette } from 'lucide-react'
 import { TombstoneIllustration } from '@/components/tombstone/TombstoneIllustration'
 
 const entryCards = [
@@ -10,7 +10,7 @@ const entryCards = [
     iconBg: 'bg-jade/10',
     borderColor: 'hover:border-jade/40',
     title: '文学 IP 墓碑',
-    desc: '邓布利多、林黛玉、小王子……5 位经典角色的故事墓碑，含墓志铭与生前遗物。',
+    desc: '邓布利多、林黛玉、小王子……15 位经典角色的故事墓碑，含墓志铭与生前遗物。',
   },
   {
     to: '/tribute/heritage',
@@ -22,11 +22,29 @@ const entryCards = [
     desc: '惠安石雕、青田石雕、徽州砖雕……5 种非遗工艺呈现的墓碑样式与工艺知识。',
   },
   {
-    to: '/create',
-    icon: Sparkles,
+    to: '/forms',
+    icon: Layers,
+    iconColor: 'text-neon-cyan',
+    iconBg: 'bg-neon-cyan/10',
+    borderColor: 'hover:border-neon-cyan/40',
+    title: '墓碑形式图鉴',
+    desc: '全球 40+ 种墓碑形式，按地区、形状、风格、材质多维度筛选与探索。',
+  },
+  {
+    to: '/culture',
+    icon: Globe,
     iconColor: 'text-neon-magenta',
     iconBg: 'bg-neon-magenta/10',
     borderColor: 'hover:border-neon-magenta/40',
+    title: '死亡文化图鉴',
+    desc: '理解不同文明对死亡的态度——从中国的天人合一到墨西哥的亡灵节。',
+  },
+  {
+    to: '/create',
+    icon: Sparkles,
+    iconColor: 'text-candle',
+    iconBg: 'bg-candle/10',
+    borderColor: 'hover:border-candle/40',
     title: '做我的墓碑',
     desc: '选模板 → 填碑文 → 拖拽 DIY → 导出长图或视频，30 秒带走属于你的纪念品。',
   },
@@ -199,12 +217,12 @@ export default function HomePage() {
       <section className="mx-auto max-w-6xl px-4 py-16 sm:py-20">
         <div className="mb-10 text-center">
           <p className="mb-2 font-serif text-xs tracking-[0.2em] text-jade/70 uppercase">
-            三种进入方式
+            五种进入方式
           </p>
           <h2 className="font-serif text-2xl text-mist sm:text-3xl">花园小径</h2>
         </div>
 
-        <div className="grid grid-cols-1 gap-5 sm:grid-cols-3">
+        <div className="grid grid-cols-1 gap-5 sm:grid-cols-2 lg:grid-cols-3">
           {entryCards.map((card) => {
             const Icon = card.icon
             return (

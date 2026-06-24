@@ -225,6 +225,198 @@ export const LITERARY_IP_TOMBSTONES: LiteraryIpTombstone[] = [
 ]
 
 /**
+ * 文学 IP 墓碑（扩展，US-02 致敬区）
+ */
+export const LITERARY_IP_TOMBSTONES_EXTENDED: LiteraryIpTombstone[] = [
+  {
+    id: 'ip-hamlet',
+    character: '哈姆雷特',
+    work: '《哈姆雷特》',
+    role: '丹麦王子 · 存在主义悲剧英雄',
+    epitaph: '剩下的只有沉默。',
+    lifespan: '约 12 世纪',
+    relics: ['骷髅头约里克', '毒剑', '戏中戏剧本', '奥菲莉娅的信'],
+    scenes: ['手持约里克骷髅独白 "To be or not to be"', '戏中戏试探叔父', '与雷欧提斯决斗'],
+    quotes: [
+      { text: 'To be, or not to be, that is the question.', context: '第三幕第一场' },
+      { text: 'There are more things in heaven and earth, Horatio, than are dreamt of in your philosophy.', context: '第一幕第五场' },
+      { text: 'The rest is silence.', context: '临终遗言' },
+    ],
+    deathScene: '与雷欧提斯决斗中中毒剑，临死前杀死叔父克劳迪斯，嘱托霍拉旭传述故事。',
+    style: 'literary-dumbledore',
+    palette: { bg: '#1a1a1d', fg: '#c8c0b8', accent: '#8b0000', border: '#4a4a4e' },
+  },
+  {
+    id: 'ip-romeo-juliet',
+    character: '罗密欧与朱丽叶',
+    work: '《罗密欧与朱丽叶》',
+    role: '维罗纳的恋人 · 爱情悲剧的永恒象征',
+    epitaph: '古往今来多少离合悲欢，谁曾见这样的哀怨辛酸。',
+    lifespan: '约 14 世纪',
+    relics: ['毒药瓶', '匕首', '戒指', '阳台上的月光'],
+    scenes: ['阳台私会', '秘密婚礼', '墓穴双双殉情'],
+    quotes: [
+      { text: 'What\'s in a name? That which we call a rose by any other name would smell as sweet.', context: '阳台私会' },
+      { text: 'Parting is such sweet sorrow.', context: '告别' },
+      { text: 'Thus with a kiss I die.', context: '临终之言' },
+    ],
+    deathScene: '罗密欧以为朱丽叶已死，饮毒自尽；朱丽叶醒来发现罗密欧已死，用匕首自尽。',
+    style: 'literary-daiyu',
+    palette: { bg: '#f5f0eb', fg: '#4a2020', accent: '#8b0000', border: '#c4a882' },
+  },
+  {
+    id: 'ip-gatsby',
+    character: '杰伊·盖茨比',
+    work: '《了不起的盖茨比》',
+    role: '美国梦的化身与牺牲品 · 神秘百万富翁',
+    epitaph: '我们奋力前行，小舟逆水而上，不断地被浪潮推回到过去。',
+    lifespan: '1890–1922',
+    relics: ['豪宅派对请柬', '绿色码头灯', '西装革履', '未寄出的信'],
+    scenes: ['隔海凝望黛西家的绿色灯光', '豪华派对上的孤独身影', '泳池边被枪杀'],
+    quotes: [
+      { text: 'Can\'t repeat the past? Why of course you can!', context: '对尼克说' },
+      { text: 'Her voice is full of money.', context: '描述黛西的声音' },
+      { text: 'I was within and without, simultaneously enchanted and repelled.', context: '纽约公寓' },
+    ],
+    deathScene: '在自家泳池被威尔逊枪杀，死前仍以为电话是黛西打来的，葬礼冷清无人参加。',
+    style: 'minimal-black',
+    palette: { bg: '#1c1c1c', fg: '#e8d5a3', accent: '#d4af37', border: '#8a8a8a' },
+  },
+  {
+    id: 'ip-anna',
+    character: '安娜·卡列尼娜',
+    work: '《安娜·卡列尼娜》',
+    role: '俄国贵族女性 · 为爱与社会决裂的悲剧人物',
+    epitaph: '伸冤在我，我必报应。',
+    lifespan: '约 1845–1876',
+    relics: ['红色手提包', '天鹅绒礼服', '儿子的照片', '渥伦斯基的信'],
+    scenes: ['舞会上与渥伦斯基的相遇', '赛马场上为渥伦斯基失态', '火车站卧轨自杀'],
+    quotes: [
+      { text: 'All happy families are alike; each unhappy family is unhappy in its own way.', context: '开篇第一句' },
+      { text: 'I think... if it is true that there are as many minds as there are heads, then there are as many kinds of love as there are hearts.', context: '内心独白' },
+      { text: 'Respect was invented to cover the empty place where love should be.', context: '对渥伦斯基说' },
+    ],
+    deathScene: '在莫斯科火车站，于绝望中卧轨自杀，被火车碾压身亡。',
+    style: 'literary-daiyu',
+    palette: { bg: '#f5f0ea', fg: '#3d1c1c', accent: '#8b0000', border: '#b8a090' },
+  },
+  {
+    id: 'ip-heathcliff',
+    character: '希斯克利夫',
+    work: '《呼啸山庄》',
+    role: '复仇的孤儿 · 为爱疯狂的哥特式反英雄',
+    epitaph: '没有我的生命我无法活下去！没有我的灵魂我无法活下去！',
+    lifespan: '1764–1802',
+    relics: ['凯瑟琳的头发', '呼啸山庄钥匙', '破旧圣经', '荒野上的石楠花'],
+    scenes: ['偷听凯瑟琳说"嫁给希斯克利夫会降低我的身份"', '凯瑟琳死后在暴风雨中呼唤她的灵魂', '绝食死于凯瑟琳的旧房间'],
+    quotes: [
+      { text: 'Whatever our souls are made of, his and mine are the same.', context: '凯瑟琳对奈莉说' },
+      { text: 'I have not broken your heart — you have broken it; and in breaking it, you have broken mine.', context: '对凯瑟琳说' },
+      { text: 'Be with me always — take any form — drive me mad!', context: '凯瑟琳死后呼唤' },
+    ],
+    deathScene: '在呼啸山庄凯瑟琳的旧房间中绝食而亡，脸上带着诡异的微笑，暴雨之夜，窗开着。',
+    style: 'literary-dumbledore',
+    palette: { bg: '#2a2622', fg: '#c8b8a8', accent: '#6b3a5b', border: '#5a4a3a' },
+  },
+  {
+    id: 'ip-ophelia',
+    character: '奥菲莉娅',
+    work: '《哈姆雷特》',
+    role: '丹麦贵族少女 · 为爱疯癫、溺水而亡',
+    epitaph: '这是迷迭香，代表记忆。',
+    lifespan: '约 12 世纪',
+    relics: ['花环', '迷迭香', '三色堇', '柳树枝'],
+    scenes: ['疯癫后分发花朵', '溺水而亡漂浮河面'],
+    quotes: [
+      { text: 'Lord, we know what we are, but know not what we may be.', context: '疯癫之言' },
+      { text: 'There\'s rosemary, that\'s for remembrance.', context: '分发花朵' },
+      { text: 'I would give you some violets, but they withered all when my father died.', context: '疯癫之言' },
+    ],
+    deathScene: '疯癫后爬上柳树编花环，树枝断裂落水，衣裙吸水沉入河底，唱着歌溺亡。',
+    style: 'literary-daiyu',
+    palette: { bg: '#e8f0f5', fg: '#3a4050', accent: '#6b8e9b', border: '#a0b8c0' },
+  },
+  {
+    id: 'ip-tom-robinson',
+    character: '汤姆·罗宾逊',
+    work: '《杀死一只知更鸟》',
+    role: '被诬告的黑人 · 无辜的知更鸟',
+    epitaph: '杀死一只知更鸟是罪过。',
+    lifespan: '约 1910–1935',
+    relics: ['残疾的左手', '圣经', '手铐残片'],
+    scenes: ['法庭审判中阿提克斯的辩护', '被诬告', '逃跑被枪杀'],
+    quotes: [
+      { text: 'I felt right sorry for her.', context: '法庭上对白人女性的同情（引发轩然大波）' },
+      { text: 'Shoot all the bluejays you want, if you can hit \'em, but remember it\'s a sin to kill a mockingbird.', context: '阿提克斯的教诲' },
+    ],
+    deathScene: '被诬告强奸罪后，绝望中试图越狱，被警卫连开17枪打死。',
+    style: 'minimal-white',
+    palette: { bg: '#f8f6f4', fg: '#2a2a2a', accent: '#4a6a8a', border: '#c0c0c0' },
+  },
+  {
+    id: 'ip-lennie',
+    character: '莱尼·斯莫尔',
+    work: '《人鼠之间》',
+    role: '智力障碍的农场工人 · 梦想养兔子的善良巨人',
+    epitaph: '乔治，再给我讲讲兔子的事。',
+    lifespan: '1902–1937',
+    relics: ['死老鼠', '毛绒兔子', '乔治的帽子'],
+    scenes: ['抚摸柔软的东西', '与乔治的梦想对话', '被乔治亲手射杀'],
+    quotes: [
+      { text: 'I like to pet nice things with my fingers, soft things.', context: '对乔治说' },
+      { text: 'Tell me about the rabbits, George.', context: '反复请求' },
+      { text: 'We got a future. We got somebody to talk to that gives a damn about us.', context: '乔治的梦想' },
+    ],
+    deathScene: '乔治在莱尼以为即将实现养兔子的梦想时，从背后开枪射杀了他，为了让他免受私刑折磨。',
+    style: 'minimal-jade',
+    palette: { bg: '#f0e8d8', fg: '#4a3a2a', accent: '#8a6a4a', border: '#c8b898' },
+  },
+  {
+    id: 'ip-charlotte',
+    character: '夏洛特',
+    work: '《夏洛的网》',
+    role: '一只聪明的蜘蛛 · 威尔伯的挚友',
+    epitaph: '你一直是我的朋友，这本身就是一件了不起的事。',
+    lifespan: '春季–秋季',
+    relics: ['蛛网', '卵囊（514个小蜘蛛）', '谷仓角落'],
+    scenes: ['在网上织出"Some Pig"', '织出"Terrific""Radiant""Humble"', '安静地死在集市角落'],
+    quotes: [
+      { text: 'You have been my friend. That in itself is a tremendous thing.', context: '对威尔伯的告别' },
+      { text: 'Some Pig.', context: '织在网上的第一句话' },
+      { text: 'I wove my webs for you because I liked you.', context: '对威尔伯说' },
+    ],
+    deathScene: '在集市产下卵囊后，独自在角落安详死去，无人知晓，只有威尔伯带着她的卵囊回到谷仓。',
+    style: 'minimal-jade',
+    palette: { bg: '#f5f0e8', fg: '#3a3028', accent: '#6a8a5a', border: '#c8b898' },
+  },
+  {
+    id: 'ip-baochai',
+    character: '薛宝钗',
+    work: '《红楼梦》',
+    role: '金陵十二钗之首 · 蘅芜苑主人 · 冷美人',
+    epitaph: '金簪雪里埋。',
+    lifespan: '约 1700–1765',
+    relics: ['金锁', '冷香丸', '蘅芜苑香草', '螃蟹诗稿'],
+    scenes: ['与宝玉成婚调包计', '劝宝玉仕途经济', '独守空闺'],
+    quotes: [
+      { text: '好风频借力，送我上青云。', context: '柳絮词' },
+      { text: '淡极始知花更艳。', context: '咏白海棠' },
+      { text: '任是无情也动人。', context: '花签' },
+    ],
+    deathScene: '贾家败落后，宝玉出家，宝钗独守空闺，最终"金簪雪里埋"——在寒冬雪地中凄凉死去。',
+    style: 'minimal-jade',
+    palette: { bg: '#e8ede8', fg: '#3d3a35', accent: '#4a7c59', border: '#8a9a8a' },
+  },
+]
+
+/**
+ * 获取所有文学 IP 墓碑（含扩展）
+ */
+export function getAllLiteraryIpTombstones(): LiteraryIpTombstone[] {
+  return [...LITERARY_IP_TOMBSTONES, ...LITERARY_IP_TOMBSTONES_EXTENDED]
+}
+
+/**
  * 非遗工艺墓碑（US-03 致敬区）
  */
 export const HERITAGE_CRAFT_TOMBSTONES: HeritageCraftTombstone[] = [

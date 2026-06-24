@@ -95,3 +95,111 @@ export interface HotlineEntry {
   hours: string
   note: string
 }
+
+// ===== 墓碑形式目录（新增） =====
+
+/** 墓碑摆放形态 */
+export type FormPlacement = 'upright' | 'flat' | 'slant' | 'bevel' | 'ledger' | 'kerbed'
+
+/** 墓碑形状 */
+export type FormShape =
+  | 'rectangular' | 'rounded-arch' | 'ogee' | 'obelisk' | 'obelisk-truncated'
+  | 'broken-column' | 'column' | 'gateway' | 'cross-latin' | 'cross-celtic'
+  | 'cross-greek' | 'cross-maltese' | 'tree-stump' | 'tree' | 'heart'
+  | 'book' | 'chest-tomb' | 'table-tomb' | 'boulder' | 'stele'
+  | 'pagoda' | 'gorinto' | 'stupa' | 'dolmen' | 'menhir'
+  | 'custom-sculptural' | 'architectural'
+
+/** 墓碑地区 */
+export type FormRegion =
+  | 'east-asia' | 'southeast-asia' | 'south-asia' | 'middle-east'
+  | 'europe-west' | 'europe-east' | 'europe-north' | 'europe-south'
+  | 'north-america' | 'latin-america' | 'africa' | 'oceania'
+
+/** 墓碑文化 */
+export type FormCulture =
+  | 'chinese' | 'japanese' | 'korean' | 'vietnamese' | 'filipino' | 'thai'
+  | 'indonesian' | 'indian' | 'turkish' | 'british' | 'french' | 'italian'
+  | 'german' | 'russian' | 'spanish' | 'nordic' | 'american' | 'mexican'
+  | 'argentine' | 'african' | 'islamic' | 'christian' | 'jewish' | 'buddhist'
+  | 'modern'
+
+/** 墓碑材质 */
+export type FormMaterial =
+  | 'granite' | 'marble' | 'limestone' | 'sandstone' | 'slate'
+  | 'bronze' | 'cast-iron' | 'zinc' | 'wood' | 'concrete' | 'coral'
+
+/** 墓碑时期 */
+export type FormPeriod =
+  | 'ancient' | 'classical' | 'medieval' | 'renaissance'
+  | '18th-century' | 'victorian' | 'edwardian'
+  | '20th-century' | 'modern' | 'contemporary'
+
+/** 墓碑风格 */
+export type FormStyle =
+  | 'traditional' | 'gothic' | 'neoclassical' | 'art-deco'
+  | 'art-nouveau' | 'egyptian-revival' | 'minimalist'
+  | 'rustic' | 'eco-nature' | 'cyberpunk' | 'steampunk' | 'baroque'
+
+/** 墓碑宗教 */
+export type FormReligion =
+  | 'christian-catholic' | 'christian-protestant' | 'christian-orthodox'
+  | 'jewish' | 'islamic' | 'buddhist' | 'hindu' | 'sikh' | 'secular'
+
+/** 墓碑形式模板 */
+export interface TombstoneForm {
+  id: string
+  name: string
+  nameEn: string
+  placement: FormPlacement
+  shape: FormShape
+  region: FormRegion
+  culture: FormCulture[]
+  material: FormMaterial[]
+  period: FormPeriod
+  style: FormStyle[]
+  religion: FormReligion[]
+  description: string
+  origin: string
+  era: string
+  symbolism: string
+  palette: {
+    bg: string
+    fg: string
+    accent: string
+    border: string
+  }
+  visualElements: string[]
+  suitableFor: string[]
+}
+
+/** 文化科普内容 */
+export interface CulturalContent {
+  id: string
+  region: string
+  regionLabel: string
+  title: string
+  philosophy: string
+  keyConcepts: string[]
+  rituals: string[]
+  tombstoneMeaning: string
+  funFacts: string[]
+  palette: {
+    bg: string
+    fg: string
+    accent: string
+    border: string
+  }
+  relatedFormIds: string[]
+}
+
+/** 墓碑符号条目 */
+export interface SymbolEntry {
+  id: string
+  category: 'plant' | 'animal' | 'object' | 'architectural'
+  name: string
+  nameEn: string
+  meaning: string
+  commonIn: string
+  icon: string
+}
