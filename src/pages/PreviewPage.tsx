@@ -96,7 +96,6 @@ export default function PreviewPage() {
           onClick={handleExportVideo}
           disabled={exporting !== null}
           className="btn-base cursor-pointer border border-blood/60 bg-blood/10 text-blood disabled:cursor-not-allowed disabled:opacity-40"
-          style={{ clipPath: 'polygon(6px 0, 100% 0, 100% calc(100% - 6px), calc(100% - 6px) 100%, 0 100%, 0 6px)' }}
         >
           <Film className="h-4 w-4" aria-hidden="true" />
           {exporting === 'video' ? '录制中…' : '导出视频（WebM）'}

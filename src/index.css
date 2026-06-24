@@ -174,32 +174,29 @@
 
 /* === 按钮工具类 === */
 @utility btn-base {
-  @apply inline-flex items-center justify-center gap-1.5 rounded-sm px-4 py-2 text-sm font-medium transition-base;
-  clip-path: polygon(8px 0, 100% 0, 100% calc(100% - 8px), calc(100% - 8px) 100%, 0 100%, 0 8px);
+  @apply inline-flex items-center justify-center gap-1.5 rounded-full px-5 py-2.5 text-sm font-medium transition-base;
 }
 
 @utility btn-primary {
-  @apply btn-base border border-jade/50 bg-jade-glow text-jade;
+  @apply btn-base border border-jade/50 bg-jade/10 text-jade;
   box-shadow: 0 2px 12px rgba(107, 142, 107, 0.12), inset 0 1px 0 rgba(255, 255, 255, 0.35);
   @variant hover {
-    @apply border-jade bg-jade/10;
-    box-shadow: 0 4px 18px rgba(107, 142, 107, 0.18), inset 0 1px 0 rgba(255, 255, 255, 0.4);
+    @apply border-jade bg-jade/15 -translate-y-0.5;
+    box-shadow: 0 8px 24px rgba(107, 142, 107, 0.18), inset 0 1px 0 rgba(255, 255, 255, 0.4);
   }
 }
 
 @utility btn-secondary {
   @apply btn-base border border-ink-border bg-ink-card text-mist-soft;
-  clip-path: polygon(6px 0, 100% 0, 100% calc(100% - 6px), calc(100% - 6px) 100%, 0 100%, 0 6px);
   box-shadow: 0 2px 8px rgba(28, 25, 23, 0.04);
   @variant hover {
-    @apply border-mist-muted bg-ink-hover text-mist;
-    box-shadow: 0 4px 14px rgba(28, 25, 23, 0.08);
+    @apply border-mist-muted bg-ink-hover text-mist -translate-y-0.5;
+    box-shadow: 0 8px 20px rgba(28, 25, 23, 0.08);
   }
 }
 
 @utility btn-ghost {
   @apply btn-base border border-transparent text-mist-dim;
-  clip-path: none;
   @variant hover {
     @apply text-mist bg-ink-soft;
   }
@@ -323,6 +320,11 @@
 @layer utilities {
   .text-balance {
     text-wrap: balance;
+  }
+
+  /* 精美缓动曲线 */
+  .ease-out-quart {
+    transition-timing-function: cubic-bezier(0.25, 1, 0.5, 1);
   }
 
   /* 背景纹理：花园光斑 */

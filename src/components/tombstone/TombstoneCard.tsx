@@ -1,7 +1,9 @@
 /**
- * 墓碑卡片（致敬区列表用）
+ * 墓碑展示卡片（致敬区 / 墓园展厅用）
+ * 设计风格：awwwards 式大图展示卡片，强调视觉预览与悬停交互
  */
-import { ArrowRight } from 'lucide-react'
+import { ArrowUpRight } from 'lucide-react'
+import { TombstoneIllustration } from './TombstoneIllustration'
 
 interface TombstoneCardProps {
   title: string
@@ -9,70 +11,85 @@ interface TombstoneCardProps {
   epitaph: string
   /** 主题色 token：candle | jade | blood | bronze | neon-cyan | neon-magenta */
   accent: string
+  /** 分类标签，如 文学IP / 非遗工艺 */
+  category?: string
+  /** 额外徽章文字，如 5位角色 / 5种工艺 */
+  badge?: string
 }
 
-/** 将主题 token 映射为具体色值，避免向 inline style 传入无效颜色字符串 */
-const ACCENT_MAP: Record<string, { hex: string; glow: string; text: string }> = {
-  candle: { hex: '#c9985d', glow: 'rgba(201,152,93,0.18)', text: 'text-candle' },
-  jade: { hex: '#6b8e6b', glow: 'rgba(107,142,107,0.18)', text: 'text-jade' },
-  blood: { hex: '#a65d6d', glow: 'rgba(166,93,109,0.18)', text: 'text-blood' },
-  bronze: { hex: '#9a7844', glow: 'rgba(154,120,68,0.18)', text: 'text-bronze' },
-  'neon-cyan': { hex: '#6b9a8f', glow: 'rgba(107,154,143,0.18)', text: 'text-neon-cyan' },
-  'neon-magenta': { hex: '#b88aa3', glow: 'rgba(184,138,163,0.18)', text: 'text-neon-magenta' },
+/** 将主题 token 映射为具体色值 */
+const ACCENT_MAP: Record<string, { hex: string; glow: string; text: string; soft: string }> = {
+  candle: { hex: '#c9985d', glow: 'rgba(201,152,93,0.22)', text: 'text-candle', soft: 'bg-candle/10' },
+  jade: { hex: '#6b8e6b', glow: 'rgba(107,142,107,0.22)', text: 'text-jade', soft: 'bg-jade/10' },
+  blood: { hex: '#a65d6d', glow: 'rgba(166,93,109,0.22)', text: 'text-blood', soft: 'bg-blood/10' },
+  bronze: { hex: '#9a7844', glow: 'rgba(154,120,68,0.22)', text: 'text-bronze', soft: 'bg-bronze/10' },
+  'neon-cyan': { hex: '#6b9a8f', glow: 'rgba(107,154,143,0.22)', text: 'text-neon-cyan', soft: 'bg-neon-cyan/10' },
+  'neon-magenta': { hex: '#b88aa3', glow: 'rgba(184,138,163,0.22)', text: 'text-neon-magenta', soft: 'bg-neon-magenta/10' },
 }
 
-export function TombstoneCard({ title, subtitle, epitaph, accent }: TombstoneCardProps) {
+export function TombstoneCard({ title, subtitle, epitaph, accent, category, badge }: TombstoneCardProps) {
   const c = ACCENT_MAP[accent] ?? ACCENT_MAP.candle
 
   return (
-    <div
-      className="ts-card group relative cursor-pointer overflow-hidden rounded-md border bg-ink-card/50 p-5 transition-base hover:ts-card-hover"
-      style={{
-        ['--accent' as string]: c.hex,
-        ['--accent-glow' as string]: c.glow,
-        borderColor: 'var(--color-ink-border)',
-      }}
+    <article
+      className="group relative flex h-full flex-col overflow-hidden rounded-2xl border border-ink-border bg-ink-card transition-all duration-500 ease-out-quart hover:-translate-y-1.5 hover:border-mist-muted hover:shadow-[0_24px_48px_-12px_rgba(61,58,53,0.12)]"
+      style={{ ['--accent' as string]: c.hex }}
     >
-      {/* 顶部装饰线 */}
-      <div
-        className="absolute inset-x-0 top-0 h-px opacity-70 transition-opacity duration-base group-hover:opacity-100"
-        style={{ background: 'linear-gradient(90deg, transparent, var(--accent), transparent)' }}
-      />
-
-      {/* 标题区 */}
-      <div className="mb-3 text-center">
-        <h3 className="font-serif text-lg tracking-[0.2em] text-mist">{title}</h3>
-        <p className="mt-1 text-xs text-mist-dim">{subtitle}</p>
-      </div>
-
-      {/* 简化墓碑造型 */}
-      <div
-        className="relative mx-auto my-4 flex h-28 w-24 flex-col items-center justify-center rounded-t-[48px] rounded-b-md border px-2 text-center transition-base group-hover:shadow-[0_0_24px_var(--accent-glow)]"
-        style={{
-          borderColor: 'color-mix(in srgb, var(--accent) 55%, transparent)',
-          background: 'linear-gradient(180deg, color-mix(in srgb, var(--accent) 12%, transparent), transparent 80%)',
-        }}
-      >
-        {/* 顶部圆球 */}
+      {/* 预览区 */}
+      <div className="relative aspect-[4/3] overflow-hidden bg-ink-soft">
+        {/* 花园背景 */}
         <div
-          className="absolute -top-2 h-4 w-4 rounded-full border-2"
-          style={{ borderColor: 'var(--accent)', background: 'var(--color-ink-card)' }}
+          className="absolute inset-0 opacity-60 transition-transform duration-700 ease-out-quart group-hover:scale-105"
+          style={{
+            background: `radial-gradient(circle at 80% 20%, ${c.glow}, transparent 35%), radial-gradient(circle at 20% 80%, rgba(138,184,138,0.08), transparent 30%), linear-gradient(180deg, #fffcf7 0%, #f0ece3 100%)`,
+          }}
         />
-        <span className="line-clamp-3 font-serif text-[11px] leading-tight text-mist-soft">
-          {epitaph}
-        </span>
+
+        {/* 简化墓碑插画 */}
+        <div className="absolute inset-0 flex items-end justify-center pb-4">
+          <TombstoneIllustration className="h-[72%] w-auto transition-transform duration-700 ease-out-quart group-hover:scale-[1.03]" />
+        </div>
+
+        {/* 顶部徽章 */}
+        <div className="absolute left-4 top-4 flex flex-wrap gap-2">
+          {category && (
+            <span className="rounded-full border border-ink-border bg-ink-card/90 px-2.5 py-1 text-[10px] font-medium uppercase tracking-wider text-mist-soft backdrop-blur-sm">
+              {category}
+            </span>
+          )}
+          {badge && (
+            <span className={`rounded-full px-2.5 py-1 text-[10px] font-medium uppercase tracking-wider ${c.soft} ${c.text}`}>
+              {badge}
+            </span>
+          )}
+        </div>
+
+        {/* 悬停遮罩 */}
+        <div className="absolute inset-0 flex items-center justify-center bg-mist/0 opacity-0 transition-all duration-500 ease-out-quart group-hover:bg-mist/5 group-hover:opacity-100">
+          <div
+            className="flex h-12 w-12 translate-y-4 items-center justify-center rounded-full border border-ink-border bg-ink-card/95 text-mist shadow-tomb transition-all duration-500 ease-out-quart group-hover:translate-y-0"
+            aria-hidden="true"
+          >
+            <ArrowUpRight className="h-5 w-5" />
+          </div>
+        </div>
       </div>
 
-      {/* 墓志铭引言 */}
-      <p className="mt-2 line-clamp-2 text-center font-serif text-xs italic leading-relaxed text-mist-dim">
-        “{epitaph}”
-      </p>
+      {/* 内容区 */}
+      <div className="flex flex-1 flex-col p-5">
+        <div className="mb-3">
+          <h3 className="mb-1 font-serif text-lg font-medium tracking-wide text-mist transition-colors duration-300 group-hover:text-mist-soft">
+            {title}
+          </h3>
+          <p className="text-xs font-medium tracking-wider text-mist-dim uppercase">{subtitle}</p>
+        </div>
 
-      {/* 进入提示 */}
-      <div className={`mt-3 flex items-center justify-center gap-1 text-xs font-mono ${c.text} opacity-0 transition-opacity duration-base group-hover:opacity-100`}>
-        <span>&gt; ENTER</span>
-        <ArrowRight className="h-3 w-3" aria-hidden="true" />
+        <div className="mt-auto border-t border-ink-border pt-3">
+          <p className="line-clamp-2 font-serif text-sm italic leading-relaxed text-mist-soft">
+            “{epitaph}”
+          </p>
+        </div>
       </div>
-    </div>
+    </article>
   )
 }
