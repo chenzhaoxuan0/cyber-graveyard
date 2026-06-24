@@ -11,7 +11,7 @@ export default function NotFoundPage() {
       </p>
       <Link
         to="/"
-        className="inline-flex items-center gap-2 rounded border border-candle/60 bg-candle/10 px-4 py-2 text-sm text-candle transition-colors hover:bg-candle/20"
+        className="inline-flex cursor-pointer items-center gap-2 rounded border border-candle/60 bg-candle/10 px-4 py-2 text-sm text-candle transition-base hover:bg-candle/20 hover:shadow-candle-sm"
       >
         <Home className="h-4 w-4" />
         回到墓园入口

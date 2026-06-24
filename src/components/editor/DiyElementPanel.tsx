@@ -2,7 +2,7 @@
  * DIY 装饰元素面板（US-05 左侧组件库）
  * 点击元素 → 调用 onAdd(elementType, content) → 由 EditorPage 添加到 fabric.js canvas
  */
-import { Type, Shapes, Hammer, QrCode, Image as ImageIcon, Link } from 'lucide-react'
+import { Type, Shapes, Hammer, QrCode, Image as ImageIcon, Link, Plus } from 'lucide-react'
 import type { DiyElement, DiyElementType } from '@/types'
 
 interface DiyElementPanelProps {
@@ -38,41 +38,66 @@ export function DiyElementPanel({ onAdd, elements }: DiyElementPanelProps) {
   const types = Object.keys(grouped) as DiyElementType[]
 
   return (
-    <div className="flex h-full flex-col">
-      <div className="border-b border-ink-card px-3 py-2">
-        <h3 className="font-serif text-sm text-mist">元 素 库</h3>
-        <p className="mt-0.5 text-[10px] text-mist-dim">点击添加到画布</p>
+    <aside className="flex h-full flex-col rounded-xl border border-ink-border bg-ink-soft/90 shadow-tomb backdrop-blur-sm">
+      <div className="border-b border-ink-border px-4 py-4">
+        <div className="flex items-center gap-2.5">
+          <div className="flex h-7 w-7 items-center justify-center rounded-md bg-ink-card text-candle shadow-candle-sm">
+            <Shapes className="h-3.5 w-3.5" aria-hidden="true" />
+          </div>
+          <div>
+            <h3 className="font-serif text-sm tracking-widest text-mist">元素库</h3>
+            <p className="text-[11px] leading-none text-mist-dim">点击添加到画布</p>
+          </div>
+        </div>
       </div>
 
-      <div className="flex-1 overflow-y-auto p-2">
-        {types.map((type) => (
-          <div key={type} className="mb-3">
-            <div className="mb-1.5 flex items-center gap-1 px-1 text-[10px] text-mist-dim">
-              {(() => {
-                const Icon = ICON_MAP[type]
-                return <Icon className="h-3 w-3" />
-              })()}
-              <span>{TYPE_LABEL[type]}</span>
-            </div>
-            <div className="grid grid-cols-2 gap-1.5">
-              {grouped[type].map((el) => {
-                const Icon = ICON_MAP[el.type]
-                return (
-                  <button
-                    key={el.id}
-                    type="button"
-                    onClick={() => onAdd(el.type, el.content ?? el.label)}
-                    className="flex flex-col items-center gap-1 rounded border border-ink-card bg-ink/40 px-1 py-2 text-center transition-all hover:border-jade/40 hover:bg-jade-soft/10"
-                  >
-                    <Icon className="h-4 w-4 text-jade" />
-                    <span className="text-[10px] leading-tight text-mist-soft">{el.label}</span>
-                  </button>
-                )
-              })}
-            </div>
-          </div>
-        ))}
+      <div className="flex-1 space-y-5 overflow-y-auto p-3 sm:p-4">
+        {types.map((type, typeIndex) => {
+          const TypeIcon = ICON_MAP[type]
+          const items = grouped[type]
+          return (
+            <section
+              key={type}
+              className="animate-fade-in"
+              style={{ animationDelay: `${typeIndex * 60}ms` }}
+            >
+              <div className="mb-2.5 flex items-center gap-2 px-1">
+                <div className="flex h-6 w-6 items-center justify-center rounded bg-ink-card text-candle">
+                  <TypeIcon className="h-3.5 w-3.5" aria-hidden="true" />
+                </div>
+                <span className="text-xs font-semibold uppercase tracking-wider text-mist-soft">
+                  {TYPE_LABEL[type]}
+                </span>
+                <span className="ml-auto rounded-full bg-ink-card px-1.5 py-0.5 text-[10px] tabular-nums text-mist-muted">
+                  {items.length}
+                </span>
+              </div>
+
+              <div className="grid grid-cols-2 gap-2">
+                {items.map((el) => {
+                  const Icon = ICON_MAP[el.type]
+                  return (
+                    <button
+                      key={el.id}
+                      type="button"
+                      onClick={() => onAdd(el.type, el.content ?? el.label)}
+                      className="group relative flex min-h-[68px] flex-col items-center justify-center gap-2 rounded-lg border border-ink-border bg-ink-card/60 px-2 py-3 text-center transition-base hover:-translate-y-0.5 hover:border-candle/40 hover:bg-ink-hover hover:shadow-candle-sm focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-candle focus-visible:ring-offset-2 focus-visible:ring-offset-ink-soft cursor-pointer"
+                      aria-label={`添加${TYPE_LABEL[type]}：${el.label}`}
+                      title={`添加${el.label}`}
+                    >
+                      <Icon className="h-5 w-5 text-mist-dim transition-base group-hover:text-candle" aria-hidden="true" />
+                      <span className="line-clamp-2 text-xs leading-tight text-mist-soft transition-base group-hover:text-mist">
+                        {el.label}
+                      </span>
+                      <Plus className="absolute right-2 top-2 h-3.5 w-3.5 text-candle opacity-0 transition-base group-hover:opacity-100" aria-hidden="true" />
+                    </button>
+                  )
+                })}
+              </div>
+            </section>
+          )
+        })}
       </div>
-    </div>
+    </aside>
   )
 }

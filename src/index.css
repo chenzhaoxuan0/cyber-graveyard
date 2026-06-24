@@ -1,24 +1,95 @@
 @import "tailwindcss";
 
 @theme {
-  --color-ink: #0a0a0f;
-  --color-ink-soft: #14141c;
-  --color-ink-card: #1c1c28;
-  --color-mist: #e6e6f0;
-  --color-mist-soft: #a8a8b8;
-  --color-mist-dim: #6b6b7a;
-  --color-candle: #f5c542;
-  --color-candle-soft: #d4a017;
-  --color-blood: #8b1a1a;
-  --color-blood-soft: #5a1010;
-  --color-jade: #4a7c59;
-  --color-jade-soft: #2d5a3d;
-  --color-bronze: #8c6d3f;
-  --color-bronze-soft: #5a4426;
+  /* === 基础意境色（暗黑纪念主题）=== */
+  --color-ink: #08080c;
+  --color-ink-soft: #111118;
+  --color-ink-card: #1a1a24;
+  --color-ink-hover: #222230;
+  --color-ink-border: #2a2a3a;
 
-  --font-serif: "Noto Serif SC", "Songti SC", "STSong", serif;
-  --font-sans: "Noto Sans SC", "PingFang SC", "Microsoft YaHei", sans-serif;
-  --font-mono: "JetBrains Mono", "Fira Code", monospace;
+  --color-mist: #f0f0f5;
+  --color-mist-soft: #b8b8c8;
+  --color-mist-dim: #8a8a9a;
+  --color-mist-muted: #5a5a6a;
+
+  --color-candle: #f6c547;
+  --color-candle-soft: #d4a017;
+  --color-candle-dim: #8a6a1f;
+  --color-candle-glow: rgba(246, 197, 71, 0.16);
+
+  --color-blood: #9b1c1c;
+  --color-blood-soft: #661414;
+  --color-blood-dim: #3d0c0c;
+  --color-blood-glow: rgba(155, 28, 28, 0.12);
+
+  --color-jade: #4f8c60;
+  --color-jade-soft: #2e5c3e;
+  --color-jade-dim: #1e3a28;
+  --color-jade-glow: rgba(79, 140, 96, 0.12);
+
+  --color-bronze: #9a7844;
+  --color-bronze-soft: #5e4a2a;
+  --color-bronze-dim: #3a2d18;
+  --color-bronze-glow: rgba(154, 120, 68, 0.12);
+
+  /* === Cyberpunk 霓虹色 === */
+  --color-neon-cyan: #00fff0;
+  --color-neon-cyan-dim: #00b8b0;
+  --color-neon-cyan-glow: rgba(0, 255, 240, 0.15);
+  --color-neon-magenta: #ff00ff;
+  --color-neon-magenta-dim: #b800b8;
+  --color-neon-magenta-glow: rgba(255, 0, 255, 0.12);
+  --color-neon-green: #00ff41;
+  --color-neon-green-dim: #00b830;
+  --color-neon-green-glow: rgba(0, 255, 65, 0.15);
+
+  /* === 字体 === */
+  --font-serif: "Noto Serif SC", "Noto Serif TC", "Songti SC", "STSong", serif;
+  --font-sans: "Noto Sans SC", "Noto Sans TC", "PingFang SC", "Microsoft YaHei", sans-serif;
+  --font-mono: "JetBrains Mono", "Fira Code", "SF Mono", monospace;
+  --font-terminal: "JetBrains Mono", "Fira Code", "Courier New", monospace;
+
+  /* === 圆角 === */
+  --radius-xs: 4px;
+  --radius-sm: 6px;
+  --radius-md: 10px;
+  --radius-lg: 16px;
+  --radius-xl: 24px;
+  --radius-full: 9999px;
+
+  /* === 间距 === */
+  --space-1: 4px;
+  --space-2: 8px;
+  --space-3: 12px;
+  --space-4: 16px;
+  --space-5: 20px;
+  --space-6: 24px;
+  --space-8: 32px;
+  --space-10: 40px;
+  --space-12: 48px;
+  --space-16: 64px;
+  --space-20: 80px;
+  --space-24: 96px;
+
+  /* === 层级 === */
+  --z-base: 0;
+  --z-dropdown: 10;
+  --z-sticky: 20;
+  --z-topbar: 50;
+  --z-modal: 100;
+  --z-toast: 200;
+
+  /* === 动画时长 === */
+  --duration-fast: 150ms;
+  --duration-base: 200ms;
+  --duration-slow: 300ms;
+  --duration-slower: 500ms;
+
+  /* === 缓动 === */
+  --ease-out: cubic-bezier(0.16, 1, 0.3, 1);
+  --ease-in-out: cubic-bezier(0.4, 0, 0.2, 1);
+  --ease-glitch: cubic-bezier(0.25, 0.1, 0.25, 1);
 }
 
 @layer base {
@@ -43,11 +114,16 @@
   }
 
   ::selection {
-    background: var(--color-candle);
+    background: var(--color-neon-cyan);
     color: var(--color-ink);
   }
 
-  /* 自定义滚动条 */
+  :focus-visible {
+    outline: 2px solid var(--color-neon-cyan);
+    outline-offset: 2px;
+    border-radius: 2px;
+  }
+
   ::-webkit-scrollbar {
     width: 8px;
     height: 8px;
@@ -56,11 +132,175 @@
     background: var(--color-ink-soft);
   }
   ::-webkit-scrollbar-thumb {
-    background: var(--color-ink-card);
+    background: var(--color-ink-border);
     border-radius: 4px;
   }
   ::-webkit-scrollbar-thumb:hover {
-    background: var(--color-mist-dim);
+    background: var(--color-mist-muted);
+  }
+}
+
+/* === 可被 @apply 的自定义工具类 === */
+@utility transition-base {
+  transition: color var(--duration-base) var(--ease-out),
+              background-color var(--duration-base) var(--ease-out),
+              border-color var(--duration-base) var(--ease-out),
+              box-shadow var(--duration-base) var(--ease-out),
+              transform var(--duration-base) var(--ease-out);
+}
+
+@utility transition-fast {
+  transition: color var(--duration-fast) var(--ease-out),
+              background-color var(--duration-fast) var(--ease-out),
+              border-color var(--duration-fast) var(--ease-out),
+              box-shadow var(--duration-fast) var(--ease-out);
+}
+
+/* === 按钮工具类 === */
+@utility btn-base {
+  @apply inline-flex items-center justify-center gap-1.5 rounded-sm px-4 py-2 text-sm font-medium transition-base;
+  clip-path: polygon(8px 0, 100% 0, 100% calc(100% - 8px), calc(100% - 8px) 100%, 0 100%, 0 8px);
+}
+
+@utility btn-primary {
+  @apply btn-base border border-neon-cyan/60 bg-neon-cyan-glow text-neon-cyan;
+  text-shadow: 0 0 8px rgba(0, 255, 240, 0.4);
+  box-shadow: 0 0 16px rgba(0, 255, 240, 0.1), inset 0 0 8px rgba(0, 255, 240, 0.05);
+  @variant hover {
+    @apply border-neon-cyan bg-neon-cyan/10;
+    box-shadow: 0 0 24px rgba(0, 255, 240, 0.2), inset 0 0 12px rgba(0, 255, 240, 0.08);
+  }
+}
+
+@utility btn-secondary {
+  @apply btn-base border border-ink-border bg-ink-card text-mist-soft;
+  clip-path: polygon(6px 0, 100% 0, 100% calc(100% - 6px), calc(100% - 6px) 100%, 0 100%, 0 6px);
+  @variant hover {
+    @apply border-mist-muted bg-ink-hover text-mist;
+    box-shadow: 0 0 16px rgba(255, 255, 255, 0.04);
+  }
+}
+
+@utility btn-ghost {
+  @apply btn-base border border-transparent text-mist-dim;
+  clip-path: none;
+  @variant hover {
+    @apply text-mist bg-ink-card;
+  }
+}
+
+/* === 卡片工具类 === */
+@utility card-hover {
+  @apply transition-base;
+  @variant hover {
+    transform: translateY(-2px);
+    box-shadow: 0 8px 32px rgba(0, 0, 0, 0.5), 0 0 24px rgba(0, 255, 240, 0.06);
+  }
+}
+
+/* === 墓碑卡片悬停（依赖 --accent CSS 变量） === */
+@utility ts-card-hover {
+  border-color: color-mix(in srgb, var(--accent) 45%, var(--color-ink-border));
+  transform: translateY(-2px);
+  box-shadow: 0 8px 28px rgba(0, 0, 0, 0.5), 0 0 20px var(--accent-glow, transparent);
+}
+
+/* === 霓虹光晕 === */
+@utility neon-glow-cyan {
+  text-shadow: 0 0 10px rgba(0, 255, 240, 0.6), 0 0 28px rgba(0, 255, 240, 0.3), 0 0 50px rgba(0, 255, 240, 0.15);
+}
+
+@utility neon-glow-amber {
+  text-shadow: 0 0 10px rgba(246, 197, 71, 0.5), 0 0 28px rgba(246, 197, 71, 0.25), 0 0 50px rgba(246, 197, 71, 0.1);
+}
+
+@utility neon-glow-green {
+  text-shadow: 0 0 10px rgba(0, 255, 65, 0.5), 0 0 28px rgba(0, 255, 65, 0.25);
+}
+
+@utility neon-glow-magenta {
+  text-shadow: 0 0 10px rgba(255, 0, 255, 0.5), 0 0 28px rgba(255, 0, 255, 0.25);
+}
+
+@utility neon-border-cyan {
+  box-shadow: 0 0 12px rgba(0, 255, 240, 0.15), inset 0 0 12px rgba(0, 255, 240, 0.04);
+}
+
+@utility neon-border-amber {
+  box-shadow: 0 0 12px rgba(246, 197, 71, 0.15), inset 0 0 12px rgba(246, 197, 71, 0.04);
+}
+
+/* === 阴影 === */
+@utility shadow-tomb {
+  box-shadow:
+    0 4px 24px rgba(0, 0, 0, 0.45),
+    inset 0 1px 0 rgba(255, 255, 255, 0.04);
+}
+
+@utility shadow-tomb-lg {
+  box-shadow:
+    0 12px 40px rgba(0, 0, 0, 0.55),
+    inset 0 1px 0 rgba(255, 255, 255, 0.05);
+}
+
+@utility shadow-candle {
+  box-shadow: 0 0 24px rgba(246, 197, 71, 0.15);
+}
+
+@utility shadow-candle-sm {
+  box-shadow: 0 0 12px rgba(246, 197, 71, 0.12);
+}
+
+@utility shadow-jade {
+  box-shadow: 0 0 24px rgba(79, 140, 96, 0.14);
+}
+
+@utility shadow-blood {
+  box-shadow: 0 0 24px rgba(155, 28, 28, 0.14);
+}
+
+@utility glass-card {
+  background: rgba(26, 26, 36, 0.72);
+  backdrop-filter: blur(12px);
+  border: 1px solid var(--color-ink-border);
+}
+
+/* === 扫描线叠加层 === */
+@utility scanlines {
+  position: relative;
+  &::before {
+    content: "";
+    position: absolute;
+    inset: 0;
+    z-index: 1;
+    pointer-events: none;
+    background: repeating-linear-gradient(
+      0deg,
+      transparent,
+      transparent 2px,
+      rgba(0, 255, 240, 0.015) 2px,
+      rgba(0, 255, 240, 0.015) 4px
+    );
+  }
+}
+
+/* === 终端边框 === */
+@utility terminal-frame {
+  border: 1px solid var(--color-ink-border);
+  box-shadow:
+    inset 0 0 30px rgba(0, 255, 240, 0.03),
+    0 0 20px rgba(0, 0, 0, 0.4);
+  position: relative;
+  &::before {
+    content: "";
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    height: 1px;
+    background: linear-gradient(90deg, transparent, rgba(0, 255, 240, 0.3), transparent);
+    z-index: 2;
+    pointer-events: none;
   }
 }
 
@@ -69,33 +309,55 @@
     text-wrap: balance;
   }
 
+  /* 背景纹理 */
   .bg-grain {
     background-image:
-      radial-gradient(circle at 25% 25%, rgba(245, 197, 66, 0.03) 0%, transparent 50%),
-      radial-gradient(circle at 75% 75%, rgba(139, 26, 26, 0.04) 0%, transparent 50%);
+      radial-gradient(circle at 20% 20%, rgba(0, 255, 240, 0.03) 0%, transparent 45%),
+      radial-gradient(circle at 80% 80%, rgba(255, 0, 255, 0.025) 0%, transparent 45%),
+      radial-gradient(circle at 50% 50%, rgba(255, 255, 255, 0.012) 0%, transparent 60%);
   }
 
-  .shadow-candle {
-    box-shadow: 0 0 24px rgba(245, 197, 66, 0.15);
+  .bg-noise {
+    background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noise'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.85' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noise)' opacity='0.04'/%3E%3C/svg%3E");
   }
 
-  .shadow-tomb {
-    box-shadow:
-      0 4px 24px rgba(0, 0, 0, 0.4),
-      inset 0 1px 0 rgba(255, 255, 255, 0.05);
-  }
+  /* === 动画 === */
 
+  /* 烛光闪烁 */
   .animate-flicker {
     animation: flicker 3s ease-in-out infinite;
   }
 
   @keyframes flicker {
     0%, 100% { opacity: 1; }
-    50% { opacity: 0.85; }
+    50% { opacity: 0.82; }
   }
 
+  /* 霓虹闪烁 */
+  .animate-neon-pulse {
+    animation: neonPulse 2s ease-in-out infinite;
+  }
+
+  @keyframes neonPulse {
+    0%, 100% { text-shadow: 0 0 8px rgba(0, 255, 240, 0.4), 0 0 20px rgba(0, 255, 240, 0.2); }
+    50% { text-shadow: 0 0 16px rgba(0, 255, 240, 0.7), 0 0 36px rgba(0, 255, 240, 0.35), 0 0 60px rgba(0, 255, 240, 0.15); }
+  }
+
+  /* 故障效果 */
+  .animate-glitch {
+    animation: glitch 3s ease-in-out infinite;
+  }
+
+  @keyframes glitch {
+    0%, 90%, 100% { transform: translateX(0); }
+    92% { transform: translateX(-2px) skewX(-1deg); }
+    94% { transform: translateX(2px) skewX(1deg); }
+    96% { transform: translateX(-1px); }
+  }
+
+  /* 淡入上移 */
   .animate-fade-in {
-    animation: fadeIn 0.6s ease-out forwards;
+    animation: fadeIn 0.6s var(--ease-out) forwards;
   }
 
   @keyframes fadeIn {
@@ -104,11 +366,50 @@
   }
 
   .animate-slide-up {
-    animation: slideUp 0.4s ease-out forwards;
+    animation: slideUp 0.5s var(--ease-out) forwards;
   }
 
   @keyframes slideUp {
     from { opacity: 0; transform: translateY(20px); }
     to { opacity: 1; transform: translateY(0); }
+  }
+
+  .animate-scale-in {
+    animation: scaleIn 0.4s var(--ease-out) forwards;
+  }
+
+  @keyframes scaleIn {
+    from { opacity: 0; transform: scale(0.96); }
+    to { opacity: 1; transform: scale(1); }
+  }
+
+  /* 终端光标闪烁 */
+  .animate-cursor {
+    animation: cursor 1s step-end infinite;
+  }
+
+  @keyframes cursor {
+    0%, 100% { opacity: 1; }
+    50% { opacity: 0; }
+  }
+
+  /* 减弱动画 */
+  @media (prefers-reduced-motion: reduce) {
+    .animate-flicker,
+    .animate-neon-pulse,
+    .animate-glitch,
+    .animate-fade-in,
+    .animate-slide-up,
+    .animate-scale-in,
+    .animate-cursor {
+      animation: none;
+    }
+
+    .card-hover,
+    .btn-base,
+    .transition-base,
+    .transition-fast {
+      transition: none;
+    }
   }
 }

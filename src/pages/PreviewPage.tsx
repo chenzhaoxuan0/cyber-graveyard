@@ -45,12 +45,12 @@ export default function PreviewPage() {
       <div className="mb-6 flex items-center justify-between">
         <Link
           to="/create"
-          className="inline-flex items-center gap-1 text-xs text-mist-dim transition-colors hover:text-mist"
+          className="inline-flex cursor-pointer items-center gap-1 text-xs text-mist-dim transition-colors hover:text-mist"
         >
           <ArrowLeft className="h-3.5 w-3.5" />
           返回编辑
         </Link>
-        <h1 className="font-serif text-2xl text-candle">预 览 墓 碑</h1>
+        <h1 className="font-serif text-2xl tracking-[0.2em] text-candle">预 览 墓 碑</h1>
         <span className="w-16" />
       </div>
 
@@ -58,7 +58,7 @@ export default function PreviewPage() {
       <div className="mb-6 flex justify-center">
         <div
           ref={previewRef}
-          className="w-full max-w-[540px] overflow-hidden rounded border border-ink-card bg-ink-card/40"
+          className="w-full overflow-hidden rounded-md border border-ink-border bg-ink-card/40 shadow-tomb-lg"
           style={{ width: 1080, maxWidth: '100%' }}
         >
           <TombstoneVisual
@@ -73,31 +73,32 @@ export default function PreviewPage() {
         </div>
       </div>
 
-      {/* 导出按钮 */}
-      <div className="sticky bottom-16 z-30 flex flex-col gap-2 rounded border border-ink-card bg-ink-soft/95 p-3 backdrop-blur sm:flex-row sm:justify-center">
+      {/* 导出按钮 - 使用统一的 btn 工具类 */}
+      <div className="sticky bottom-16 z-30 flex flex-col gap-2 rounded-md border border-ink-border bg-ink-soft/95 p-3 backdrop-blur sm:flex-row sm:justify-center">
         <Link
           to="/editor"
-          className="inline-flex items-center justify-center gap-2 rounded border border-jade/60 bg-jade-soft/20 px-4 py-2 text-sm text-jade transition-colors hover:bg-jade-soft/40"
+          className="btn-secondary cursor-pointer"
         >
-          <Sparkles className="h-4 w-4" />
+          <Sparkles className="h-4 w-4" aria-hidden="true" />
           继续装饰
         </Link>
         <button
           type="button"
           onClick={handleExportImage}
           disabled={exporting !== null}
-          className="inline-flex items-center justify-center gap-2 rounded border border-candle/60 bg-candle/10 px-4 py-2 text-sm text-candle transition-colors enabled:hover:bg-candle/20 disabled:opacity-40"
+          className="btn-primary cursor-pointer disabled:cursor-not-allowed disabled:opacity-40"
         >
-          <ImageIcon className="h-4 w-4" />
+          <ImageIcon className="h-4 w-4" aria-hidden="true" />
           {exporting === 'image' ? '导出中…' : '导出长图（PNG）'}
         </button>
         <button
           type="button"
           onClick={handleExportVideo}
           disabled={exporting !== null}
-          className="inline-flex items-center justify-center gap-2 rounded border border-blood/60 bg-blood/10 px-4 py-2 text-sm text-blood transition-colors enabled:hover:bg-blood/20 disabled:opacity-40"
+          className="btn-base cursor-pointer border border-blood/60 bg-blood/10 text-blood disabled:cursor-not-allowed disabled:opacity-40"
+          style={{ clipPath: 'polygon(6px 0, 100% 0, 100% calc(100% - 6px), calc(100% - 6px) 100%, 0 100%, 0 6px)' }}
         >
-          <Film className="h-4 w-4" />
+          <Film className="h-4 w-4" aria-hidden="true" />
           {exporting === 'video' ? '录制中…' : '导出视频（WebM）'}
         </button>
       </div>

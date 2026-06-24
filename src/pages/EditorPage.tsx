@@ -1,6 +1,6 @@
-import { useEffect, useRef, useState } from 'react'
+import { useEffect, useRef, useState, useCallback } from 'react'
 import { Link } from 'react-router-dom'
-import { ArrowLeft, Undo2, Redo2, Eye } from 'lucide-react'
+import { ArrowLeft, Undo2, Redo2, Eye, Trash2, Monitor, ZoomIn, ZoomOut } from 'lucide-react'
 import * as fabric from 'fabric'
 import { useAppStore } from '@/store'
 import { DIY_ELEMENTS } from '@/data/tombstones'
@@ -19,6 +19,24 @@ export default function EditorPage() {
   const canRedo = historyIndex >= 0 && historyIndex < historyLen - 1
 
   const [scale, setScale] = useState(1)
+  const [isFitView, setIsFitView] = useState(true)
+  const [selectedCount, setSelectedCount] = useState(0)
+
+  const updateScale = useCallback(() => {
+    const viewportWidth = window.innerWidth
+    const containerPadding = 32
+    const availableWidth = viewportWidth - containerPadding
+
+    if (isFitView && availableWidth < 1080) {
+      setScale(Math.max(0.35, (availableWidth - 32) / 1080))
+    } else if (isFitView && viewportWidth < 1280) {
+      // lg breakpoint: left sidebar 280px + gap 16px + padding
+      const lgAvailableWidth = viewportWidth - 280 - 16 - containerPadding
+      setScale(Math.max(0.45, (lgAvailableWidth - 32) / 1080))
+    } else {
+      setScale(1)
+    }
+  }, [isFitView])
 
   // 初始化 fabric 画布
   useEffect(() => {
@@ -44,19 +62,16 @@ export default function EditorPage() {
         textAlign: 'center',
       })
       canvas.add(text)
+      pushHistory(canvas.toJSON())
     }
 
-    // 移动端缩放
-    const updateScale = () => {
-      const viewportWidth = window.innerWidth
-      if (viewportWidth < 1080) {
-        setScale((viewportWidth - 32) / 1080)
-      } else {
-        setScale(1)
-      }
-    }
     updateScale()
     window.addEventListener('resize', updateScale)
+
+    // 监听选区变化
+    canvas.on('selection:created', () => setSelectedCount(canvas.getActiveObjects().length))
+    canvas.on('selection:updated', () => setSelectedCount(canvas.getActiveObjects().length))
+    canvas.on('selection:cleared', () => setSelectedCount(0))
 
     // 操作历史
     canvas.on('object:added', () => pushHistory(canvas.toJSON()))
@@ -70,11 +85,41 @@ export default function EditorPage() {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [])
 
+  // 视图模式变化时重新计算缩放
+  useEffect(() => {
+    updateScale()
+  }, [isFitView, updateScale])
+
+  // 键盘快捷键：Delete / Backspace 删除，Ctrl/Cmd+Z 撤销，Ctrl/Cmd+Shift+Z 重做
+  useEffect(() => {
+    const handleKeyDown = (e: KeyboardEvent) => {
+      const canvas = fabricRef.current
+      if (!canvas) return
+
+      if ((e.key === 'Delete' || e.key === 'Backspace') && selectedCount > 0) {
+        e.preventDefault()
+        handleDelete()
+        return
+      }
+
+      if ((e.metaKey || e.ctrlKey) && e.key.toLowerCase() === 'z') {
+        e.preventDefault()
+        if (e.shiftKey) {
+          handleRedo()
+        } else {
+          handleUndo()
+        }
+      }
+    }
+
+    window.addEventListener('keydown', handleKeyDown)
+    return () => window.removeEventListener('keydown', handleKeyDown)
+  }, [selectedCount])
+
   const handleAddElement = (elementType: string, content: string) => {
     const canvas = fabricRef.current
     if (!canvas) return
 
-    // 图片类型：触发文件上传
     if (elementType === 'image') {
       handleUploadImage()
       return
@@ -111,7 +156,6 @@ export default function EditorPage() {
         strokeWidth: 2,
       })
     } else if (elementType === 'qrcode') {
-      // 二维码占位（工具版不生成真实二维码，仅占位框）
       obj = new fabric.Rect({
         left: 470,
         top: 400,
@@ -122,7 +166,6 @@ export default function EditorPage() {
         strokeWidth: 4,
       })
     } else if (elementType === 'pattern' || elementType === 'heritage') {
-      // 纹样 / 非遗纹样：装饰占位框 + 标签
       const group = [
         new fabric.Rect({
           left: 420,
@@ -150,7 +193,6 @@ export default function EditorPage() {
       canvas.setActiveObject(group[group.length - 1])
       return
     } else if (elementType === 'link') {
-      // 链接：带下划线的文本
       obj = new fabric.IText(content || 'https://', {
         left: 540,
         top: 400,
@@ -189,9 +231,7 @@ export default function EditorPage() {
       reader.onload = async (ev) => {
         const dataUrl = ev.target?.result as string
         if (!dataUrl) return
-        // fabric.js 6: fromURL 返回 Promise
         const img = await fabric.Image.fromURL(dataUrl)
-        // 等比缩放到最大宽度 300
         const maxW = 300
         if (img.width && img.width > maxW) {
           img.scaleToWidth(maxW)
@@ -228,67 +268,158 @@ export default function EditorPage() {
     }
   }
 
+  const handleDelete = () => {
+    const canvas = fabricRef.current
+    if (!canvas) return
+    const activeObjects = canvas.getActiveObjects()
+    if (activeObjects.length === 0) return
+    activeObjects.forEach((obj) => canvas.remove(obj))
+    canvas.discardActiveObject()
+    canvas.renderAll()
+    setSelectedCount(0)
+  }
+
+  const handleZoomIn = () => setScale((s) => Math.min(1.5, s + 0.1))
+  const handleZoomOut = () => setScale((s) => Math.max(0.35, s - 0.1))
+
+  const viewModeLabel = isFitView ? '适应画布' : '原始尺寸'
+  const scalePercent = Math.round(scale * 100)
+
   return (
-    <div className="mx-auto max-w-6xl px-4 py-6">
-      <div className="mb-4 flex items-center justify-between">
+    <div className="mx-auto max-w-7xl px-3 py-4 sm:px-4 sm:py-6">
+      {/* 顶部工具栏 */}
+      <header className="mb-4 flex flex-col gap-3 rounded-xl border border-ink-card bg-ink-soft/80 p-3 backdrop-blur sm:mb-5 sm:flex-row sm:items-center sm:justify-between sm:p-4">
         <Link
           to="/create"
-          className="inline-flex items-center gap-1 text-xs text-mist-dim transition-colors hover:text-mist"
+          className="inline-flex h-9 w-fit items-center gap-1.5 rounded-md px-2 text-xs text-mist-dim transition-base hover:bg-ink-card hover:text-mist focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-candle focus-visible:ring-offset-2 focus-visible:ring-offset-ink-soft cursor-pointer"
         >
-          <ArrowLeft className="h-3.5 w-3.5" />
+          <ArrowLeft className="h-3.5 w-3.5" aria-hidden="true" />
           返回填碑文
         </Link>
-        <h1 className="font-serif text-xl text-candle">DIY 我 的 墓 碑</h1>
-        <div className="flex items-center gap-2">
-          <button
-            type="button"
-            onClick={handleUndo}
-            disabled={!canUndo}
-            className="rounded border border-mist-dim/40 p-1.5 text-mist-soft transition-colors enabled:hover:border-candle enabled:hover:text-candle disabled:opacity-30"
-            aria-label="撤销"
-          >
-            <Undo2 className="h-4 w-4" />
-          </button>
-          <button
-            type="button"
-            onClick={handleRedo}
-            disabled={!canRedo}
-            className="rounded border border-mist-dim/40 p-1.5 text-mist-soft transition-colors enabled:hover:border-candle enabled:hover:text-candle disabled:opacity-30"
-            aria-label="重做"
-          >
-            <Redo2 className="h-4 w-4" />
-          </button>
-          <Link
-            to="/preview"
-            className="inline-flex items-center gap-1 rounded border border-candle/60 bg-candle/10 px-2 py-1.5 text-xs text-candle transition-colors hover:bg-candle/20"
-          >
-            <Eye className="h-3.5 w-3.5" />
-            预览
-          </Link>
-        </div>
-      </div>
 
-      <div className="grid grid-cols-1 gap-4 lg:grid-cols-[280px_1fr]">
+        <h1 className="font-serif text-lg tracking-[0.2em] text-candle sm:text-xl">DIY 我 的 墓 碑</h1>
+
+        <div className="flex flex-wrap items-center gap-2">
+          {/* 历史操作组 */}
+          <div className="flex items-center gap-1 rounded-lg border border-ink-border bg-ink-card/60 p-1">
+            <IconButton onClick={handleUndo} disabled={!canUndo} aria-label="撤销 (Ctrl+Z)" title="撤销">
+              <Undo2 className="h-4 w-4" />
+            </IconButton>
+            <div className="h-4 w-px bg-ink-border" aria-hidden="true" />
+            <IconButton onClick={handleRedo} disabled={!canRedo} aria-label="重做 (Ctrl+Shift+Z)" title="重做">
+              <Redo2 className="h-4 w-4" />
+            </IconButton>
+          </div>
+
+          {/* 视图操作组 */}
+          <div className="flex items-center gap-1 rounded-lg border border-ink-border bg-ink-card/60 p-1">
+            <IconButton onClick={handleZoomOut} aria-label="缩小" title="缩小">
+              <ZoomOut className="h-4 w-4" />
+            </IconButton>
+            <span className="min-w-[3ch] px-1 text-center text-[11px] tabular-nums text-mist-dim">{scalePercent}%</span>
+            <IconButton onClick={handleZoomIn} aria-label="放大" title="放大">
+              <ZoomIn className="h-4 w-4" />
+            </IconButton>
+            <IconButton
+              onClick={() => setIsFitView((v) => !v)}
+              aria-label={viewModeLabel}
+              title={viewModeLabel}
+              active={isFitView}
+            >
+              <Monitor className="h-4 w-4" />
+            </IconButton>
+          </div>
+
+          {/* 删除与预览 */}
+          <div className="flex items-center gap-2">
+            <IconButton
+              onClick={handleDelete}
+              disabled={selectedCount === 0}
+              aria-label="删除选中元素 (Delete)"
+              title="删除选中元素"
+              destructive
+            >
+              <Trash2 className="h-4 w-4" />
+            </IconButton>
+            <Link
+              to="/preview"
+              className="btn-primary inline-flex h-9 items-center gap-1.5 px-3 text-xs cursor-pointer"
+            >
+              <Eye className="h-3.5 w-3.5" aria-hidden="true" />
+              预览
+            </Link>
+          </div>
+        </div>
+      </header>
+
+      <div className="grid grid-cols-1 gap-4 lg:grid-cols-[300px_1fr]">
         {/* 左侧组件库 */}
         <DiyElementPanel onAdd={handleAddElement} elements={DIY_ELEMENTS} />
 
         {/* 右侧画布 */}
-        <div className="overflow-auto rounded border border-ink-card bg-ink-card/40 p-4">
+        <section
+          className="relative overflow-auto rounded-xl border border-ink-border bg-ink-card/40 p-3 shadow-tomb sm:p-4"
+          aria-label="编辑画布"
+        >
           <div
+            className="relative mx-auto rounded border border-ink-border shadow-tomb-lg"
             style={{
               transform: `scale(${scale})`,
               transformOrigin: 'top center',
               width: 1080,
-              height: 1440 * scale + 20,
+              height: 1440,
             }}
           >
             <canvas ref={canvasRef} width={1080} height={1440} />
           </div>
-          <p className="mt-2 text-center text-xs text-mist-dim">
-            画布尺寸 1080 × 1440 · {scale < 1 ? `已缩放至 ${Math.round(scale * 100)}%` : '原始尺寸'}
-          </p>
-        </div>
+
+          <div className="mt-3 flex items-center justify-center gap-2 text-center text-[11px] text-mist-dim">
+            <span>画布尺寸 1080 × 1440</span>
+            <span className="text-mist-muted" aria-hidden="true">·</span>
+            <span className="tabular-nums">{scalePercent}%</span>
+            {selectedCount > 0 && (
+              <>
+                <span className="text-mist-muted" aria-hidden="true">·</span>
+                <span className="text-candle">已选 {selectedCount} 个元素</span>
+              </>
+            )}
+          </div>
+        </section>
       </div>
     </div>
+  )
+}
+
+// 统一图标按钮：44×44 触控目标，统一 hover/focus/disabled 状态
+interface IconButtonProps {
+  onClick: () => void
+  children: React.ReactNode
+  'aria-label': string
+  title?: string
+  disabled?: boolean
+  active?: boolean
+  destructive?: boolean
+}
+
+function IconButton({ onClick, children, disabled, active, destructive, ...rest }: IconButtonProps) {
+  return (
+    <button
+      type="button"
+      onClick={onClick}
+      disabled={disabled}
+      className={[
+        'inline-flex h-9 w-9 items-center justify-center rounded-md border transition-base',
+        'focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-candle focus-visible:ring-offset-2 focus-visible:ring-offset-ink-card',
+        'cursor-pointer disabled:cursor-not-allowed',
+        destructive
+          ? 'border-blood/40 text-mist-soft hover:border-blood hover:bg-blood/15 hover:text-blood disabled:opacity-30'
+          : active
+            ? 'border-candle/60 bg-candle/10 text-candle hover:bg-candle/15'
+            : 'border-transparent bg-transparent text-mist-soft hover:border-mist-muted hover:bg-ink-hover hover:text-mist disabled:opacity-30',
+      ].join(' ')}
+      {...rest}
+    >
+      {children}
+    </button>
   )
 }

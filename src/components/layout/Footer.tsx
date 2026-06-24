@@ -1,57 +1,76 @@
 import { Link } from 'react-router-dom'
 import { Download, Heart, Shield } from 'lucide-react'
 
+const footerLinkClass =
+  'rounded-sm px-1 py-0.5 text-mist-dim transition-base hover:text-mist focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-candle focus-visible:ring-offset-2 focus-visible:ring-offset-ink-soft'
+
 export function Footer() {
   return (
     <footer
       id="site-footer"
       className="border-t border-ink-card bg-ink-soft/80 backdrop-blur"
     >
-      <div className="mx-auto max-w-6xl px-4 py-8">
+      <div className="mx-auto max-w-6xl px-4 py-8 sm:py-10">
         {/* 免责声明 */}
-        <div className="mb-6 rounded border border-blood-soft/40 bg-ink-card/60 p-4">
+        <section
+          aria-labelledby="footer-disclaimer-heading"
+          className="mb-5 rounded-lg border border-blood-soft/40 bg-ink-card/60 p-4 shadow-tomb"
+        >
           <div className="mb-2 flex items-center gap-2">
-            <Shield className="h-4 w-4 text-blood" />
-            <h2 className="font-serif text-sm text-candle">免责声明</h2>
+            <Shield className="h-4 w-4 shrink-0 text-blood" aria-hidden="true" />
+            <h2 id="footer-disclaimer-heading" className="font-serif text-sm font-medium text-candle">
+              免责声明
+            </h2>
           </div>
           <p className="text-xs leading-relaxed text-mist-soft">
             「赛博墓园」是一个面向生者的娱乐创作平台，所有墓碑、墓志铭均为用户即兴创作，不代表真实死亡事件。
             本站不提供 AI 生成内容、不存储用户数据、不进行风险内容检测。如果你此刻正经历情绪困扰，
             请记得有人愿意听你说话——下方心理援助热线 24 小时在线。
           </p>
-        </div>
+        </section>
 
         {/* 心理援助热线下载 */}
-        <div className="mb-6 rounded border border-jade-soft/40 bg-ink-card/60 p-4">
+        <section
+          aria-labelledby="footer-hotline-heading"
+          className="mb-6 rounded-lg border border-jade-soft/40 bg-ink-card/60 p-4 shadow-tomb"
+        >
           <div className="mb-2 flex items-center gap-2">
-            <Heart className="h-4 w-4 text-jade" />
-            <h2 className="font-serif text-sm text-candle">心理援助热线</h2>
+            <Heart className="h-4 w-4 shrink-0 text-jade" aria-hidden="true" />
+            <h2 id="footer-hotline-heading" className="font-serif text-sm font-medium text-candle">
+              心理援助热线
+            </h2>
           </div>
-          <p className="mb-3 text-xs text-mist-soft">
+          <p className="mb-3 text-xs leading-relaxed text-mist-soft">
             覆盖全国（含港澳台）共 25 条心理援助热线，24 小时在线。
           </p>
           <a
             href="/心理援助热线.csv"
             download="心理援助热线.csv"
-            className="inline-flex items-center gap-2 rounded border border-jade/60 bg-jade-soft/20 px-3 py-1.5 text-xs text-jade transition-colors hover:bg-jade-soft/40"
+            className="inline-flex items-center gap-2 rounded-md border border-jade/60 bg-jade-soft/20 px-3 py-1.5 text-xs font-medium text-jade transition-base hover:border-jade hover:bg-jade-soft/40 hover:shadow-jade focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-jade focus-visible:ring-offset-2 focus-visible:ring-offset-ink-soft"
           >
-            <Download className="h-3.5 w-3.5" />
+            <Download className="h-3.5 w-3.5" aria-hidden="true" />
             下载心理援助热线表（CSV）
           </a>
-        </div>
+        </section>
 
         {/* 链接区 */}
-        <div className="flex flex-col gap-2 border-t border-ink-card pt-4 text-xs text-mist-dim sm:flex-row sm:items-center sm:justify-between">
-          <div className="flex flex-wrap items-center gap-3">
-            <Link to="/" className="hover:text-mist">首页</Link>
-            <span>·</span>
-            <Link to="/tribute" className="hover:text-mist">致敬区</Link>
-            <span>·</span>
-            <Link to="/create" className="hover:text-mist">做我的墓碑</Link>
-            <span>·</span>
+        <div className="flex flex-col gap-3 border-t border-ink-card pt-4 text-xs text-mist-dim sm:flex-row sm:items-center sm:justify-between">
+          <nav aria-label="页脚导航" className="flex flex-wrap items-center gap-2">
+            <Link to="/" className={footerLinkClass}>
+              首页
+            </Link>
+            <span aria-hidden="true">·</span>
+            <Link to="/tribute" className={footerLinkClass}>
+              致敬区
+            </Link>
+            <span aria-hidden="true">·</span>
+            <Link to="/create" className={footerLinkClass}>
+              做我的墓碑
+            </Link>
+            <span aria-hidden="true">·</span>
             <a
               href="#user-agreement"
-              className="hover:text-mist"
+              className={footerLinkClass}
               onClick={(e) => {
                 e.preventDefault()
                 alert('用户协议：本站为纯工具型娱乐创作平台，不存储用户数据，不承担内容审核责任。所有创作内容仅在本会话内有效，关闭页面即丢失。')
@@ -59,8 +78,8 @@ export function Footer() {
             >
               用户协议
             </a>
-          </div>
-          <div className="font-mono">
+          </nav>
+          <div className="font-mono text-mist-muted">
             © 2026 赛博墓园 · 热爱你的生活
           </div>
         </div>

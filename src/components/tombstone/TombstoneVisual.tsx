@@ -89,50 +89,68 @@ export function TombstoneVisual({
           style={{ background: `linear-gradient(90deg, transparent, ${palette.accent}, transparent)` }}
         />
 
-        {/* 墓碑主体 */}
-        <div
-          className="relative my-6 flex min-h-[320px] w-full max-w-[420px] flex-col items-center justify-center rounded-t-[80px] rounded-b-lg border-2 px-8 py-10 text-center"
-          style={{
-            borderColor: palette.border,
-            background: `${palette.bg}aa`,
-            boxShadow: `0 0 40px ${palette.accent}22, inset 0 0 20px ${palette.bg}`,
-          }}
-        >
+        {/* 墓碑主体 - 优化造型：圆顶 + 两侧装饰 + 底座 */}
+        <div className="relative my-6 w-full max-w-[420px]">
           {/* 顶部圆球装饰 */}
+          <div className="relative mx-auto mb-[-8px] h-5 w-5 rounded-full border-2 z-10" style={{ borderColor: palette.accent, background: palette.bg }} />
+
+          {/* 墓碑碑身 */}
           <div
-            className="absolute -top-3 h-6 w-6 rounded-full border-2"
-            style={{ borderColor: palette.accent, background: palette.bg }}
-          />
-
-          {/* 墓志铭 */}
-          <p
-            className="font-serif text-lg leading-relaxed"
-            style={{ color: palette.fg }}
+            className="relative flex min-h-[320px] flex-col items-center justify-center rounded-t-[80px] rounded-b-lg border-2 px-8 py-10 text-center"
+            style={{
+              borderColor: palette.border,
+              background: `${palette.bg}aa`,
+              boxShadow: `0 0 40px ${palette.accent}22, inset 0 0 20px ${palette.bg}`,
+            }}
           >
-            {epitaph || '尚未撰写墓志铭'}
-          </p>
+            {/* 内边框装饰 */}
+            <div
+              className="pointer-events-none absolute inset-3 rounded-t-[68px] rounded-b-sm border"
+              style={{ borderColor: `${palette.accent}33` }}
+            />
 
-          {/* 数字遗产 */}
-          {digitalAssets && digitalAssets.length > 0 && (
-            <div className="mt-6 w-full border-t pt-4" style={{ borderColor: `${palette.border}66` }}>
-              <div className="mb-2 text-[10px] tracking-widest opacity-60">数 字 遗 产</div>
-              <ul className="space-y-1">
-                {digitalAssets.map((a, i) => (
-                  <li key={i} className="font-serif text-xs opacity-80">
-                    · {a}
-                  </li>
-                ))}
-              </ul>
-            </div>
-          )}
+            {/* 墓志铭 */}
+            <p
+              className="font-serif text-lg leading-relaxed"
+              style={{ color: palette.fg }}
+            >
+              {epitaph || '尚未撰写墓志铭'}
+            </p>
 
-          {/* 路过者寄语 */}
-          {passerbyMessage && (
-            <div className="mt-6 w-full border-t pt-4" style={{ borderColor: `${palette.border}66` }}>
-              <div className="mb-1 text-[10px] tracking-widest opacity-60">路 过 者</div>
-              <p className="font-serif text-xs italic opacity-80">“{passerbyMessage}”</p>
-            </div>
-          )}
+            {/* 数字遗产 */}
+            {digitalAssets && digitalAssets.length > 0 && (
+              <div className="mt-6 w-full border-t pt-4" style={{ borderColor: `${palette.border}66` }}>
+                <div className="mb-2 text-[10px] tracking-widest opacity-60">数 字 遗 产</div>
+                <ul className="space-y-1">
+                  {digitalAssets.map((a, i) => (
+                    <li key={i} className="font-serif text-xs opacity-80">
+                      · {a}
+                    </li>
+                  ))}
+                </ul>
+              </div>
+            )}
+
+            {/* 路过者寄语 */}
+            {passerbyMessage && (
+              <div className="mt-6 w-full border-t pt-4" style={{ borderColor: `${palette.border}66` }}>
+                <div className="mb-1 text-[10px] tracking-widest opacity-60">路 过 者</div>
+                <p className="font-serif text-xs italic opacity-80">“{passerbyMessage}”</p>
+              </div>
+            )}
+          </div>
+
+          {/* 底座 */}
+          <div
+            className="mx-auto mt-[-2px] h-3 w-[88%] rounded-b-sm"
+            style={{
+              background: `linear-gradient(180deg, ${palette.border}, ${palette.bg})`,
+            }}
+          />
+          <div
+            className="mx-auto h-2 w-[78%] rounded-b-sm opacity-60"
+            style={{ background: palette.border }}
+          />
         </div>
 
         {/* 底部装饰 */}
