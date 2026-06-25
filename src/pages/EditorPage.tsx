@@ -2,11 +2,11 @@ import { useEffect, useRef, useState, useCallback } from 'react'
 import { Link } from 'react-router-dom'
 import { ArrowLeft, Undo2, Redo2, Eye, Trash2, Monitor, ZoomIn, ZoomOut } from 'lucide-react'
 import * as fabric from 'fabric'
-import { useAppStore } from '@/store'
-import { getAllDiyElements } from '@/data/tombstones'
+import { useAppStore, formSignature } from '@/store'
+import { getAllDiyElements, TEMPLATES } from '@/data/tombstones'
 import { getCanvasPalette } from '@/data/story-mapping'
 import { DiyElementPanel } from '@/components/editor/DiyElementPanel'
-import type { DiyElement } from '@/types'
+import type { DiyElement, InscriptionForm } from '@/types'
 
 type Palette = { bg: string; fg: string; accent: string; border: string }
 
@@ -34,6 +34,204 @@ function makeSeedObject(el: DiyElement, left: number, top: number, palette: Pale
   })
 }
 
+// 真实石材色（与 TombstoneVisual 保持一致）
+const STONE_BODY = '#d6d3d1'
+const STONE_DARK = '#a8a29e'
+const STONE_BORDER = '#78716c'
+
+/** 用原生 fabric 对象在画布上重建墓碑：碑身、圆球、标题、墓志铭等全部可编辑。
+ *  替代此前把 TombstoneVisual 截图作底图的方案——现在内容不再被烤进图片。 */
+function seedTombstone(canvas: fabric.Canvas, form: InscriptionForm, palette: Palette) {
+  const tpl = TEMPLATES.find((t) => t.id === form.templateId) || TEMPLATES[0]
+
+  // 标题（生卒年/名字）
+  canvas.add(
+    new fabric.IText(form.lifespan || '佚 名', {
+      left: 540,
+      top: 130,
+      originX: 'center',
+      originY: 'center',
+      fontFamily: 'Noto Serif SC, serif',
+      fontSize: 56,
+      fill: palette.fg,
+      charSpacing: 300,
+      textAlign: 'center',
+    }),
+  )
+
+  // 副标题（模板名）
+  canvas.add(
+    new fabric.IText(tpl.name, {
+      left: 540,
+      top: 210,
+      originX: 'center',
+      originY: 'center',
+      fontFamily: 'Noto Sans SC, sans-serif',
+      fontSize: 22,
+      fill: palette.fg,
+      opacity: 0.7,
+      charSpacing: 100,
+      textAlign: 'center',
+    }),
+  )
+
+  // 装饰分隔线
+  canvas.add(
+    new fabric.Rect({
+      left: 440,
+      top: 268,
+      width: 200,
+      height: 2,
+      fill: palette.accent,
+    }),
+  )
+
+  // 墓碑碑身（圆顶石质）
+  canvas.add(
+    new fabric.Rect({
+      left: 290,
+      top: 345,
+      width: 500,
+      height: 660,
+      rx: 90,
+      ry: 90,
+      fill: new fabric.Gradient({
+        type: 'linear',
+        gradientUnits: 'percentage',
+        coords: { x1: 0, y1: 0, x2: 0, y2: 1 },
+        colorStops: [
+          { offset: 0, color: STONE_BODY },
+          { offset: 1, color: STONE_DARK },
+        ],
+      }),
+      stroke: STONE_BORDER,
+      strokeWidth: 3,
+      shadow: new fabric.Shadow({
+        color: 'rgba(28,25,23,0.18)',
+        blur: 40,
+        offsetX: 0,
+        offsetY: 12,
+      }),
+    }),
+  )
+
+  // 顶部圆球装饰（叠在碑身顶端）
+  canvas.add(
+    new fabric.Circle({
+      left: 540,
+      top: 330,
+      radius: 14,
+      originX: 'center',
+      originY: 'center',
+      fill: STONE_BODY,
+      stroke: STONE_BORDER,
+      strokeWidth: 2,
+    }),
+  )
+
+  // 墓志铭
+  canvas.add(
+    new fabric.IText(form.epitaph || '尚未撰写墓志铭', {
+      left: 540,
+      top: 600,
+      originX: 'center',
+      originY: 'center',
+      fontFamily: 'Noto Serif SC, serif',
+      fontSize: 36,
+      fill: palette.fg,
+      textAlign: 'center',
+    }),
+  )
+
+  // 数字遗产
+  if (form.digitalAssets.length > 0) {
+    canvas.add(
+      new fabric.IText(form.digitalAssets.map((a) => '· ' + a).join('\n'), {
+        left: 540,
+        top: 800,
+        originX: 'center',
+        originY: 'center',
+        fontFamily: 'Noto Serif SC, serif',
+        fontSize: 24,
+        fill: palette.fg,
+        opacity: 0.85,
+        textAlign: 'center',
+      }),
+    )
+  }
+
+  // 路过者寄语
+  if (form.passerbyMessage.trim()) {
+    canvas.add(
+      new fabric.IText('“' + form.passerbyMessage + '”', {
+        left: 540,
+        top: 920,
+        originX: 'center',
+        originY: 'center',
+        fontFamily: 'Noto Serif SC, serif',
+        fontSize: 24,
+        fill: palette.fg,
+        fontStyle: 'italic',
+        opacity: 0.8,
+        textAlign: 'center',
+      }),
+    )
+  }
+
+  // 底座
+  canvas.add(
+    new fabric.Rect({
+      left: 340,
+      top: 1010,
+      width: 400,
+      height: 14,
+      fill: STONE_DARK,
+    }),
+  )
+  canvas.add(
+    new fabric.Rect({
+      left: 390,
+      top: 1024,
+      width: 300,
+      height: 10,
+      fill: STONE_BORDER,
+      opacity: 0.6,
+    }),
+  )
+
+  // 底部页脚
+  canvas.add(
+    new fabric.IText('赛 博 墓 园 · CYBER GRAVEYARD', {
+      left: 540,
+      top: 1390,
+      originX: 'center',
+      originY: 'center',
+      fontFamily: 'Noto Sans SC, sans-serif',
+      fontSize: 18,
+      fill: palette.fg,
+      opacity: 0.4,
+      charSpacing: 400,
+      textAlign: 'center',
+    }),
+  )
+}
+
+/** 已选装饰品按 3×3 网格摆放在墓碑下方 */
+function seedDecorations(canvas: fabric.Canvas, form: InscriptionForm, palette: Palette) {
+  const allElements: DiyElement[] = getAllDiyElements()
+  const selected = form.decorationIds
+    .map((id) => allElements.find((e) => e.id === id))
+    .filter((e): e is DiyElement => Boolean(e))
+    .slice(0, 9)
+  selected.forEach((el, i) => {
+    const col = i % 3
+    const row = Math.floor(i / 3)
+    const left = 140 + col * 360
+    const top = 1100 + row * 120
+    canvas.add(makeSeedObject(el, left, top, palette))
+  })
+}
+
 export default function EditorPage() {
   const canvasRef = useRef<HTMLCanvasElement>(null)
   const fabricRef = useRef<fabric.Canvas | null>(null)
@@ -42,6 +240,7 @@ export default function EditorPage() {
   const suppressSyncRef = useRef(false)
   const form = useAppStore((s) => s.form)
   const canvasSnapshot = useAppStore((s) => s.canvasSnapshot)
+  const canvasFormSignature = useAppStore((s) => s.canvasFormSignature)
   const pushHistory = useAppStore((s) => s.pushHistory)
   const setCanvasState = useAppStore((s) => s.setCanvasState)
   const undoAction = useAppStore((s) => s.undo)
@@ -91,8 +290,10 @@ export default function EditorPage() {
       setCanvasState(json, canvas.toDataURL())
     }
 
-    // 恢复已有画布；首次进入时按故事流选择播种画布（palette 上色 + 装饰品网格摆放）
-    if (canvasSnapshot) {
+    // 表单内容签名对比：相同则恢复用户已编辑的画布；
+    // 不同（首次进入，或回上一步修改过碑文/样式/装饰）则用原生 fabric 对象重建墓碑。
+    const currentSig = formSignature(form)
+    if (canvasSnapshot && currentSig === canvasFormSignature) {
       suppressSyncRef.current = true
       canvas.loadFromJSON(canvasSnapshot).then(() => {
         canvas.renderAll()
@@ -102,38 +303,10 @@ export default function EditorPage() {
     } else {
       const palette = getCanvasPalette(form.formId, form.templateId)
       canvas.backgroundColor = palette.bg
-
-      // 墓志铭居中
-      if (form.epitaph) {
-        canvas.add(
-          new fabric.IText(form.epitaph, {
-            left: 540,
-            top: 720,
-            originX: 'center',
-            originY: 'center',
-            fontFamily: 'Noto Serif SC, serif',
-            fontSize: 48,
-            fill: palette.fg,
-            textAlign: 'center',
-          }),
-        )
-      }
-
-      // 已选装饰品按 3×3 网格摆放在画布上半区
-      const allElements: DiyElement[] = getAllDiyElements()
-      const selected = form.decorationIds
-        .map((id) => allElements.find((e) => e.id === id))
-        .filter((e): e is DiyElement => Boolean(e))
-        .slice(0, 9)
-
-      selected.forEach((el, i) => {
-        const col = i % 3
-        const row = Math.floor(i / 3)
-        const left = 140 + col * 360
-        const top = 120 + row * 160
-        canvas.add(makeSeedObject(el, left, top, palette))
-      })
-
+      suppressSyncRef.current = true
+      seedTombstone(canvas, form, palette)
+      seedDecorations(canvas, form, palette)
+      suppressSyncRef.current = false
       canvas.renderAll()
       syncSnapshot()
     }

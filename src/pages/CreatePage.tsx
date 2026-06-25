@@ -11,6 +11,7 @@ import { RegionStep } from '@/components/story/RegionStep'
 import { StyleStep } from '@/components/story/StyleStep'
 import { DecorationStep } from '@/components/story/DecorationStep'
 import { InscriptionStep } from '@/components/story/InscriptionStep'
+import { NoticeCard } from '@/components/create/NoticeCard'
 
 const STEP_HINT: Record<number, string> = {
   1: '选择一片土地，听听那里的人如何看待生死。',
@@ -49,13 +50,21 @@ export default function CreatePage() {
       <StoryProgress current={storyStep} />
 
       <div className="mx-auto max-w-4xl px-4 pt-4">
-        <Link
-          to="/"
-          className="inline-flex h-9 w-fit items-center gap-1.5 rounded-md px-2 text-xs text-mist-dim transition-base hover:bg-ink-card hover:text-mist focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-candle focus-visible:ring-offset-2 focus-visible:ring-offset-ink-soft cursor-pointer"
-        >
-          <ArrowLeft className="h-3.5 w-3.5" aria-hidden="true" />
-          返回首页
-        </Link>
+        <div className="mb-3 flex items-center justify-between">
+          <Link
+            to="/"
+            className="inline-flex h-9 w-fit items-center gap-1.5 rounded-md px-2 text-xs text-mist-dim transition-base hover:bg-ink-card hover:text-mist focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-candle focus-visible:ring-offset-2 focus-visible:ring-offset-ink-soft cursor-pointer"
+          >
+            <ArrowLeft className="h-3.5 w-3.5" aria-hidden="true" />
+            返回首页
+          </Link>
+          <span className="hidden text-xs text-mist-dim sm:block">本地创作 · 数据不上传</span>
+        </div>
+
+        {/* 援助提示卡：文化致敬与情绪表达，不替代专业心理援助 */}
+        <div className="mb-6">
+          <NoticeCard />
+        </div>
       </div>
 
       {storyStep === 1 && <RegionStep />}

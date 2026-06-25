@@ -9,6 +9,21 @@ import type { InscriptionForm } from '@/types'
 
 const MAX_HISTORY = 20
 
+/** 计算碑文表单内容签名，用于判断编辑器是否需要重新生成。
+ *  当用户回上一步修改了碑文/样式/装饰后，签名变化 → 编辑器重新生成墓碑。 */
+export function formSignature(form: InscriptionForm): string {
+  return JSON.stringify([
+    form.epitaph,
+    form.lifespan,
+    form.digitalAssets,
+    form.passerbyMessage,
+    form.templateId,
+    form.formId,
+    form.regionId,
+    form.decorationIds,
+  ])
+}
+
 interface AppState {
   /* —— 碑文表单 —— */
   form: InscriptionForm
@@ -31,6 +46,8 @@ interface AppState {
   canvasSnapshot: string
   /** 画布的 PNG data URL，供预览页直接展示与导出 */
   canvasPreview: string
+  /** 生成 canvasSnapshot 时的表单签名；若与当前表单签名不一致，编辑器需重新生成 */
+  canvasFormSignature: string
   setCanvasState: (json: string, preview: string) => void
 
   /* —— 顶部安全条 / 底部援助条 —— */
@@ -61,6 +78,7 @@ export const useAppStore = create<AppState>((set, get) => ({
       historyIndex: -1,
       canvasSnapshot: '',
       canvasPreview: '',
+      canvasFormSignature: '',
       storyStep: 1,
     }),
 
@@ -90,7 +108,13 @@ export const useAppStore = create<AppState>((set, get) => ({
 
   canvasSnapshot: '',
   canvasPreview: '',
-  setCanvasState: (json, preview) => set({ canvasSnapshot: json, canvasPreview: preview }),
+  canvasFormSignature: '',
+  setCanvasState: (json, preview) =>
+    set((s) => ({
+      canvasSnapshot: json,
+      canvasPreview: preview,
+      canvasFormSignature: formSignature(s.form),
+    })),
 
   storyStep: 1,
   setStoryStep: (step) => set({ storyStep: step }),
