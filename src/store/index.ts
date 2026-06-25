@@ -22,6 +22,13 @@ interface AppState {
   undo: () => string | null
   redo: () => string | null
 
+  /* —— DIY 编辑器画布状态 —— */
+  /** 序列化的 fabric.js JSON，用于离开编辑器后恢复画布 */
+  canvasSnapshot: string
+  /** 画布的 PNG data URL，供预览页直接展示与导出 */
+  canvasPreview: string
+  setCanvasState: (json: string, preview: string) => void
+
   /* —— 顶部安全条 / 底部援助条 —— */
   topBarVisible: boolean
   bottomBarVisible: boolean
@@ -40,7 +47,14 @@ const initialForm: InscriptionForm = {
 export const useAppStore = create<AppState>((set, get) => ({
   form: initialForm,
   setForm: (patch) => set((s) => ({ form: { ...s.form, ...patch } })),
-  resetForm: () => set({ form: initialForm }),
+  resetForm: () =>
+    set({
+      form: initialForm,
+      history: [],
+      historyIndex: -1,
+      canvasSnapshot: '',
+      canvasPreview: '',
+    }),
 
   history: [],
   historyIndex: -1,
@@ -65,6 +79,10 @@ export const useAppStore = create<AppState>((set, get) => ({
     set({ historyIndex: newIndex })
     return history[newIndex] ?? null
   },
+
+  canvasSnapshot: '',
+  canvasPreview: '',
+  setCanvasState: (json, preview) => set({ canvasSnapshot: json, canvasPreview: preview }),
 
   topBarVisible: true,
   bottomBarVisible: true,

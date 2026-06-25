@@ -6,12 +6,8 @@ import type {
   FormPlacement,
   FormShape,
   FormRegion,
-  FormCulture,
   FormMaterial,
-  FormPeriod,
   FormStyle,
-  FormReligion,
-  TombstoneForm,
 } from '@/types'
 
 // ===== 筛选维度标签映射 =====
@@ -188,33 +184,6 @@ function buildFilterOptions(): FilterGroup[] {
 }
 
 const FILTER_GROUPS = buildFilterOptions()
-
-// 将 accent 颜色映射为 CSS 颜色类名
-function mapAccentToColorClass(accent: string): string {
-  const hex = accent.toLowerCase().replace('#', '')
-  // 根据色调返回合适的颜色类名
-  const r = parseInt(hex.slice(0, 2), 16)
-  const g = parseInt(hex.slice(2, 4), 16)
-  const b = parseInt(hex.slice(4, 6), 16)
-
-  // 根据色相判断
-  if (r > g && r > b) {
-    if (r > 180) return 'text-blood'
-    if (r > 140) return 'text-candle'
-    return 'text-bronze'
-  }
-  if (g > r && g > b) {
-    if (g > 140) return 'text-jade'
-    return 'text-neon-cyan'
-  }
-  if (b > r && b > g) {
-    return 'text-neon-cyan'
-  }
-  if (r > 140 && g > 100 && b < 100) {
-    return 'text-candle'
-  }
-  return 'text-mist'
-}
 
 // 形状标签对应的显示标签
 function getShapeDisplayLabel(shape: FormShape): string {

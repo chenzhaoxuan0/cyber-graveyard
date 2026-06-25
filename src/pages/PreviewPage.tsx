@@ -9,10 +9,13 @@ import { exportVideo } from '@/lib/videoExport'
 
 export default function PreviewPage() {
   const form = useAppStore((s) => s.form)
+  const canvasPreview = useAppStore((s) => s.canvasPreview)
   const previewRef = useRef<HTMLDivElement>(null)
   const [exporting, setExporting] = useState<'image' | 'video' | null>(null)
 
   const template = TEMPLATES.find((t) => t.id === form.templateId) || TEMPLATES[0]
+  // 用户是否在 DIY 编辑器中做过修改：有画布快照时优先展示编辑器成果
+  const hasCanvasWork = Boolean(canvasPreview)
 
   const handleExportImage = async () => {
     if (!previewRef.current || exporting) return
@@ -61,15 +64,23 @@ export default function PreviewPage() {
           className="w-full overflow-hidden rounded-md border border-ink-border bg-ink-card/40 shadow-tomb-lg"
           style={{ width: 1080, maxWidth: '100%' }}
         >
-          <TombstoneVisual
-            template={template.category}
-            title={form.lifespan || '佚 名'}
-            subtitle={template.name}
-            epitaph={form.epitaph}
-            passerbyMessage={form.passerbyMessage}
-            digitalAssets={form.digitalAssets}
-            craft={template.category === 'heritage' ? template.id : undefined}
-          />
+          {hasCanvasWork ? (
+            <img
+              src={canvasPreview}
+              alt="DIY 墓碑预览"
+              className="block w-full h-auto"
+            />
+          ) : (
+            <TombstoneVisual
+              template={template.category}
+              title={form.lifespan || '佚 名'}
+              subtitle={template.name}
+              epitaph={form.epitaph}
+              passerbyMessage={form.passerbyMessage}
+              digitalAssets={form.digitalAssets}
+              craft={template.category === 'heritage' ? template.id : undefined}
+            />
+          )}
         </div>
       </div>
 

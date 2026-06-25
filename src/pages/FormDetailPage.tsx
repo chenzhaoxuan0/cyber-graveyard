@@ -106,6 +106,7 @@ const PERIOD_LABELS: Record<FormPeriod, string> = {
   medieval: '中世纪',
   renaissance: '文艺复兴',
   '18th-century': '18世纪',
+  '19th-century': '19世纪',
   victorian: '维多利亚',
   edwardian: '爱德华时代',
   '20th-century': '20世纪',

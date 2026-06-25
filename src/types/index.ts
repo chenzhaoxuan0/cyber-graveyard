@@ -137,7 +137,7 @@ export type FormMaterial =
 /** 墓碑时期 */
 export type FormPeriod =
   | 'ancient' | 'classical' | 'medieval' | 'renaissance'
-  | '18th-century' | 'victorian' | 'edwardian'
+  | '18th-century' | '19th-century' | 'victorian' | 'edwardian'
   | '20th-century' | 'modern' | 'contemporary'
 
 /** 墓碑风格 */

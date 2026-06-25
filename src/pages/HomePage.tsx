@@ -1,5 +1,5 @@
 import { Link } from 'react-router-dom'
-import { BookOpen, Hammer, Sparkles, ArrowRight, Flower2, Globe, Layers, Palette } from 'lucide-react'
+import { BookOpen, Hammer, Sparkles, ArrowRight, Flower2, Globe, Layers } from 'lucide-react'
 import { TombstoneIllustration } from '@/components/tombstone/TombstoneIllustration'
 
 const entryCards = [

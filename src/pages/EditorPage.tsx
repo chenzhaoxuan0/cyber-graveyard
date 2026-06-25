@@ -9,8 +9,13 @@ import { DiyElementPanel } from '@/components/editor/DiyElementPanel'
 export default function EditorPage() {
   const canvasRef = useRef<HTMLCanvasElement>(null)
   const fabricRef = useRef<fabric.Canvas | null>(null)
+  // 在恢复画布（loadFromJSON）期间抑制 object:* 事件触发的 syncSnapshot，
+  // 避免逐对象回写 history 与预览图。组件级 ref，供 init effect 与 undo/redo 共享。
+  const suppressSyncRef = useRef(false)
   const form = useAppStore((s) => s.form)
+  const canvasSnapshot = useAppStore((s) => s.canvasSnapshot)
   const pushHistory = useAppStore((s) => s.pushHistory)
+  const setCanvasState = useAppStore((s) => s.setCanvasState)
   const undoAction = useAppStore((s) => s.undo)
   const redoAction = useAppStore((s) => s.redo)
   const historyIndex = useAppStore((s) => s.historyIndex)
@@ -49,8 +54,24 @@ export default function EditorPage() {
     })
     fabricRef.current = canvas
 
-    // 添加初始碑文
-    if (form.epitaph) {
+    // 同步画布状态到全局 store：历史（撤销/重做）+ 预览图（供预览页展示）
+    // 在恢复画布期间通过 suppressSyncRef 跳过，避免逐对象触发同步
+    const syncSnapshot = () => {
+      if (suppressSyncRef.current) return
+      const json = JSON.stringify(canvas.toJSON())
+      pushHistory(json)
+      setCanvasState(json, canvas.toDataURL())
+    }
+
+    // 恢复已有画布，或首次进入时播种碑文
+    if (canvasSnapshot) {
+      suppressSyncRef.current = true
+      canvas.loadFromJSON(canvasSnapshot).then(() => {
+        canvas.renderAll()
+        suppressSyncRef.current = false
+        setCanvasState(canvasSnapshot, canvas.toDataURL())
+      })
+    } else if (form.epitaph) {
       const text = new fabric.IText(form.epitaph, {
         left: 540,
         top: 720,
@@ -62,7 +83,7 @@ export default function EditorPage() {
         textAlign: 'center',
       })
       canvas.add(text)
-      pushHistory(canvas.toJSON())
+      syncSnapshot()
     }
 
     updateScale()
@@ -73,10 +94,10 @@ export default function EditorPage() {
     canvas.on('selection:updated', () => setSelectedCount(canvas.getActiveObjects().length))
     canvas.on('selection:cleared', () => setSelectedCount(0))
 
-    // 操作历史
-    canvas.on('object:added', () => pushHistory(canvas.toJSON()))
-    canvas.on('object:modified', () => pushHistory(canvas.toJSON()))
-    canvas.on('object:removed', () => pushHistory(canvas.toJSON()))
+    // 操作历史 + 预览同步
+    canvas.on('object:added', syncSnapshot)
+    canvas.on('object:modified', syncSnapshot)
+    canvas.on('object:removed', syncSnapshot)
 
     return () => {
       canvas.dispose()
@@ -226,8 +247,11 @@ export default function EditorPage() {
     if (!canvas) return
     const snapshot = undoAction()
     if (snapshot) {
+      suppressSyncRef.current = true
       canvas.loadFromJSON(snapshot).then(() => {
         canvas.renderAll()
+        suppressSyncRef.current = false
+        setCanvasState(snapshot, canvas.toDataURL())
       })
     }
   }
@@ -237,8 +261,11 @@ export default function EditorPage() {
     if (!canvas) return
     const snapshot = redoAction()
     if (snapshot) {
+      suppressSyncRef.current = true
       canvas.loadFromJSON(snapshot).then(() => {
         canvas.renderAll()
+        suppressSyncRef.current = false
+        setCanvasState(snapshot, canvas.toDataURL())
       })
     }
   }
