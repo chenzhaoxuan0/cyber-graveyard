@@ -15,6 +15,10 @@ interface AppState {
   setForm: (patch: Partial<InscriptionForm>) => void
   resetForm: () => void
 
+  /* —— 故事流向导 —— */
+  storyStep: number
+  setStoryStep: (step: number) => void
+
   /* —— DIY 编辑器撤销/重做 —— */
   history: string[]
   historyIndex: number
@@ -42,6 +46,9 @@ const initialForm: InscriptionForm = {
   digitalAssets: [],
   passerbyMessage: '',
   templateId: '',
+  regionId: '',
+  formId: '',
+  decorationIds: [],
 }
 
 export const useAppStore = create<AppState>((set, get) => ({
@@ -54,6 +61,7 @@ export const useAppStore = create<AppState>((set, get) => ({
       historyIndex: -1,
       canvasSnapshot: '',
       canvasPreview: '',
+      storyStep: 1,
     }),
 
   history: [],
@@ -83,6 +91,9 @@ export const useAppStore = create<AppState>((set, get) => ({
   canvasSnapshot: '',
   canvasPreview: '',
   setCanvasState: (json, preview) => set({ canvasSnapshot: json, canvasPreview: preview }),
+
+  storyStep: 1,
+  setStoryStep: (step) => set({ storyStep: step }),
 
   topBarVisible: true,
   bottomBarVisible: true,

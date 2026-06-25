@@ -74,6 +74,12 @@ export interface InscriptionForm {
   digitalAssets: string[]
   passerbyMessage: string
   templateId: string
+  /** 故事流：所选地区（CulturalContent id） */
+  regionId: string
+  /** 故事流：所选墓碑文化形式（TombstoneForm id） */
+  formId: string
+  /** 故事流：已选装饰品（DiyElement id 列表） */
+  decorationIds: string[]
 }
 
 /** DIY 装饰元素类型 */

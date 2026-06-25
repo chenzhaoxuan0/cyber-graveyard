@@ -4,7 +4,35 @@ import { ArrowLeft, Undo2, Redo2, Eye, Trash2, Monitor, ZoomIn, ZoomOut } from '
 import * as fabric from 'fabric'
 import { useAppStore } from '@/store'
 import { getAllDiyElements } from '@/data/tombstones'
+import { getCanvasPalette } from '@/data/story-mapping'
 import { DiyElementPanel } from '@/components/editor/DiyElementPanel'
+import type { DiyElement } from '@/types'
+
+type Palette = { bg: string; fg: string; accent: string; border: string }
+
+/** 故事流首次进入时，按装饰元素元数据在画布上生成一个 fabric 对象（位于 left/top） */
+function makeSeedObject(el: DiyElement, left: number, top: number, palette: Palette): fabric.Object {
+  const content = el.content ?? el.label
+  if (el.type === 'text') {
+    return new fabric.IText(content, {
+      left, top, fontFamily: 'Noto Serif SC, serif', fontSize: 32, fill: palette.fg,
+    })
+  }
+  if (el.type === 'link') {
+    return new fabric.IText(content || 'https://', {
+      left, top, fontFamily: 'Noto Sans SC, sans-serif', fontSize: 24, fill: palette.accent, underline: true,
+    })
+  }
+  if (el.type === 'qrcode') {
+    return new fabric.Rect({
+      left, top, width: 120, height: 120, fill: '#fffcf7', stroke: palette.fg, strokeWidth: 4,
+    })
+  }
+  // 默认装饰类（badge/emoji/glitter/neon/standee/glowstick/achievement/danmaku/pattern/heritage/image）
+  return new fabric.IText(content || '·', {
+    left, top, fontFamily: 'Noto Sans SC, sans-serif', fontSize: 36, fill: palette.accent,
+  })
+}
 
 export default function EditorPage() {
   const canvasRef = useRef<HTMLCanvasElement>(null)
@@ -63,7 +91,7 @@ export default function EditorPage() {
       setCanvasState(json, canvas.toDataURL())
     }
 
-    // 恢复已有画布，或首次进入时播种碑文
+    // 恢复已有画布；首次进入时按故事流选择播种画布（palette 上色 + 装饰品网格摆放）
     if (canvasSnapshot) {
       suppressSyncRef.current = true
       canvas.loadFromJSON(canvasSnapshot).then(() => {
@@ -71,18 +99,42 @@ export default function EditorPage() {
         suppressSyncRef.current = false
         setCanvasState(canvasSnapshot, canvas.toDataURL())
       })
-    } else if (form.epitaph) {
-      const text = new fabric.IText(form.epitaph, {
-        left: 540,
-        top: 720,
-        originX: 'center',
-        originY: 'center',
-        fontFamily: 'Noto Serif SC, serif',
-        fontSize: 48,
-        fill: '#3d3a35',
-        textAlign: 'center',
+    } else {
+      const palette = getCanvasPalette(form.formId, form.templateId)
+      canvas.backgroundColor = palette.bg
+
+      // 墓志铭居中
+      if (form.epitaph) {
+        canvas.add(
+          new fabric.IText(form.epitaph, {
+            left: 540,
+            top: 720,
+            originX: 'center',
+            originY: 'center',
+            fontFamily: 'Noto Serif SC, serif',
+            fontSize: 48,
+            fill: palette.fg,
+            textAlign: 'center',
+          }),
+        )
+      }
+
+      // 已选装饰品按 3×3 网格摆放在画布上半区
+      const allElements: DiyElement[] = getAllDiyElements()
+      const selected = form.decorationIds
+        .map((id) => allElements.find((e) => e.id === id))
+        .filter((e): e is DiyElement => Boolean(e))
+        .slice(0, 9)
+
+      selected.forEach((el, i) => {
+        const col = i % 3
+        const row = Math.floor(i / 3)
+        const left = 140 + col * 360
+        const top = 120 + row * 160
+        canvas.add(makeSeedObject(el, left, top, palette))
       })
-      canvas.add(text)
+
+      canvas.renderAll()
       syncSnapshot()
     }
 
