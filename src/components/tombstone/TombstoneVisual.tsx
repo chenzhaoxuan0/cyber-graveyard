@@ -3,9 +3,17 @@
  * 童话花园中的真实石质墓碑，统一 1080px 宽输出
  * 用于：致敬区预览、创建预览、导出长图/视频
  */
-import { useMemo } from 'react'
+import { useMemo, useRef, useEffect } from 'react'
 import { TEMPLATES, HERITAGE_CRAFT_TOMBSTONES } from '@/data/tombstones'
 import type { TombstoneTemplate } from '@/types'
+
+/** 可编辑字段名；数字遗产按索引单独提交 */
+export type EditableField =
+  | 'lifespan'
+  | 'epitaph'
+  | 'passerbyMessage'
+  | `digitalAssets.${number}`
+  | 'digitalAssets'
 
 interface TombstoneVisualProps {
   /** 模板大类或具体 style */
@@ -18,6 +26,12 @@ interface TombstoneVisualProps {
   digitalAssets?: string[]
   /** 非遗工艺 id（用于查 palette） */
   craft?: string
+  /** 启用内联文字编辑（contentEditable）；仅 /editor 应开启 */
+  editable?: boolean
+  /** 文字提交回调；field 标识哪个字段 */
+  onFieldChange?: (field: EditableField, value: string) => void
+  /** 强制根容器高度（用于 1080×1440 stage） */
+  height?: number
 }
 
 /** 根据 template 字符串解析出 palette */
@@ -76,6 +90,9 @@ export function TombstoneVisual({
   passerbyMessage,
   digitalAssets,
   craft,
+  editable = false,
+  onFieldChange,
+  height,
 }: TombstoneVisualProps) {
   const palette = useMemo(() => resolvePalette(template, craft), [template, craft])
 
@@ -97,7 +114,8 @@ export function TombstoneVisual({
       style={{
         background: gardenBg,
         color: textColor,
-        minHeight: 600,
+        height: height ?? 600,
+        width: '100%',
       }}
     >
       {/* 顶部柔光 */}
@@ -120,7 +138,15 @@ export function TombstoneVisual({
             className="font-serif text-2xl tracking-[0.3em]"
             style={{ color: textColor }}
           >
-            {title}
+            {editable ? (
+              <EditableText
+                value={title}
+                onCommit={(v) => onFieldChange?.('lifespan', v)}
+                ariaLabel="生卒年"
+              />
+            ) : (
+              title
+            )}
           </div>
           <div className="mt-1 text-xs tracking-widest opacity-70">{subtitle}</div>
         </div>
@@ -163,12 +189,23 @@ export function TombstoneVisual({
             />
 
             {/* 墓志铭 */}
-            <p
-              className="font-serif text-lg leading-relaxed"
-              style={{ color: textColor, textShadow: '0 1px 0 rgba(255,255,255,0.25)' }}
-            >
-              {epitaph || '尚未撰写墓志铭'}
-            </p>
+            {editable ? (
+              <EditableText
+                multiline
+                value={epitaph || '尚未撰写墓志铭'}
+                onCommit={(v) => onFieldChange?.('epitaph', v)}
+                className="font-serif text-lg leading-relaxed"
+                style={{ color: textColor, textShadow: '0 1px 0 rgba(255,255,255,0.25)' }}
+                ariaLabel="墓志铭"
+              />
+            ) : (
+              <p
+                className="font-serif text-lg leading-relaxed"
+                style={{ color: textColor, textShadow: '0 1px 0 rgba(255,255,255,0.25)' }}
+              >
+                {epitaph || '尚未撰写墓志铭'}
+              </p>
+            )}
 
             {/* 数字遗产 */}
             {digitalAssets && digitalAssets.length > 0 && (
@@ -177,7 +214,16 @@ export function TombstoneVisual({
                 <ul className="space-y-1">
                   {digitalAssets.map((a, i) => (
                     <li key={i} className="font-serif text-xs opacity-80">
-                      · {a}
+                      {'· '}
+                      {editable ? (
+                        <EditableText
+                          value={a}
+                          onCommit={(v) => onFieldChange?.(`digitalAssets.${i}`, v)}
+                          ariaLabel={`数字遗产 ${i + 1}`}
+                        />
+                      ) : (
+                        a
+                      )}
                     </li>
                   ))}
                 </ul>
@@ -185,10 +231,20 @@ export function TombstoneVisual({
             )}
 
             {/* 路过者寄语 */}
-            {passerbyMessage && (
+            {(passerbyMessage || editable) && (
               <div className="mt-6 w-full border-t pt-4" style={{ borderColor: `${stoneBorder}66` }}>
                 <div className="mb-1 text-[10px] tracking-widest opacity-60">路 过 者</div>
-                <p className="font-serif text-xs italic opacity-80">“{passerbyMessage}”</p>
+                {editable ? (
+                  <p className="font-serif text-xs italic opacity-80">
+                    ‘<EditableText
+                      value={passerbyMessage ?? ''}
+                      onCommit={(v) => onFieldChange?.('passerbyMessage', v)}
+                      ariaLabel="路过者寄语"
+                    />’
+                  </p>
+                ) : (
+                  <p className="font-serif text-xs italic opacity-80">“{passerbyMessage}”</p>
+                )}
               </div>
             )}
           </div>
@@ -216,5 +272,83 @@ export function TombstoneVisual({
         </div>
       </div>
     </div>
+  )
+}
+
+/** 非受控 contentEditable：JSX 不渲染 children，textContent 由 effect 同步。
+ *  避免 React 19 reconciliation 在用户输入时重写 DOM 导致光标跳到行首。
+ *  中文 IME 用 compositionstart/end 守护，组合期间不提交。 */
+function EditableText({
+  value,
+  onCommit,
+  className,
+  style,
+  multiline,
+  ariaLabel,
+}: {
+  value: string
+  onCommit: (v: string) => void
+  className?: string
+  style?: React.CSSProperties
+  multiline?: boolean
+  ariaLabel?: string
+}) {
+  const ref = useRef<HTMLElement>(null)
+  const composingRef = useRef(false)
+
+  useEffect(() => {
+    const el = ref.current
+    if (!el) return
+    if (el.textContent !== value) {
+      // 用户正在编辑时不强制同步，避免光标跳
+      if (document.activeElement !== el) el.textContent = value
+    }
+  }, [value])
+
+  const handleInput = (e: React.FormEvent<HTMLElement>) => {
+    if (composingRef.current) return
+    onCommit((e.currentTarget as HTMLElement).textContent ?? '')
+  }
+  const handleCompositionEnd = (e: React.CompositionEvent<HTMLElement>) => {
+    composingRef.current = false
+    onCommit((e.target as HTMLElement).textContent ?? '')
+  }
+  const handleBlur = (e: React.FocusEvent<HTMLElement>) => {
+    onCommit(e.currentTarget.textContent ?? '')
+  }
+
+  const editableStyle: React.CSSProperties = { ...style, outline: 'none', cursor: 'text' }
+
+  if (multiline) {
+    return (
+      <p
+        ref={ref as React.RefObject<HTMLParagraphElement>}
+        className={className}
+        style={editableStyle}
+        contentEditable
+        suppressContentEditableWarning
+        role="textbox"
+        aria-label={ariaLabel}
+        onInput={handleInput}
+        onCompositionStart={() => (composingRef.current = true)}
+        onCompositionEnd={handleCompositionEnd}
+        onBlur={handleBlur}
+      />
+    )
+  }
+  return (
+    <span
+      ref={ref as React.RefObject<HTMLSpanElement>}
+      className={className}
+      style={editableStyle}
+      contentEditable
+      suppressContentEditableWarning
+      role="textbox"
+      aria-label={ariaLabel}
+      onInput={handleInput}
+      onCompositionStart={() => (composingRef.current = true)}
+      onCompositionEnd={handleCompositionEnd}
+      onBlur={handleBlur}
+    />
   )
 }

@@ -14,8 +14,6 @@ export default function PreviewPage() {
   const [exporting, setExporting] = useState<'image' | 'video' | null>(null)
 
   const template = TEMPLATES.find((t) => t.id === form.templateId) || TEMPLATES[0]
-  // 用户是否在 DIY 编辑器中做过修改：有画布快照时优先展示编辑器成果
-  const hasCanvasWork = Boolean(canvasPreview)
 
   const handleExportImage = async () => {
     if (!previewRef.current || exporting) return
@@ -57,30 +55,35 @@ export default function PreviewPage() {
         <span className="w-16" />
       </div>
 
-      {/* 墓碑预览（导出目标） */}
+      {/* 墓碑预览（导出目标）：永远渲染 DOM 墓碑；有装饰快照时叠加透明 PNG */}
       <div className="mb-6 flex justify-center">
         <div
           ref={previewRef}
           className="w-full overflow-hidden rounded-md border border-ink-border bg-ink-card/40 shadow-tomb-lg"
-          style={{ width: 1080, maxWidth: '100%' }}
+          style={{ width: 1080, maxWidth: '100%', isolation: 'isolate' }}
         >
-          {hasCanvasWork ? (
-            <img
-              src={canvasPreview}
-              alt="DIY 墓碑预览"
-              className="block w-full h-auto"
-            />
-          ) : (
-            <TombstoneVisual
-              template={template.category}
-              title={form.lifespan || '佚 名'}
-              subtitle={template.name}
-              epitaph={form.epitaph}
-              passerbyMessage={form.passerbyMessage}
-              digitalAssets={form.digitalAssets}
-              craft={template.category === 'heritage' ? template.id : undefined}
-            />
-          )}
+          <div className="relative" style={{ width: 1080, height: 1440 }}>
+            <div className="absolute inset-0 z-10">
+              <TombstoneVisual
+                template={template.category}
+                title={form.lifespan || '佚 名'}
+                subtitle={template.name}
+                epitaph={form.epitaph}
+                passerbyMessage={form.passerbyMessage}
+                digitalAssets={form.digitalAssets}
+                craft={template.category === 'heritage' ? template.id : undefined}
+                height={1440}
+              />
+            </div>
+            {canvasPreview && (
+              <img
+                src={canvasPreview}
+                alt="装饰叠层"
+                className="absolute inset-0 z-20 block"
+                style={{ width: 1080, height: 1440, pointerEvents: 'none' }}
+              />
+            )}
+          </div>
         </div>
       </div>
 

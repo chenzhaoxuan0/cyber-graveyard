@@ -1,14 +1,38 @@
 import { useEffect, useRef, useState, useCallback } from 'react'
 import { Link } from 'react-router-dom'
-import { ArrowLeft, Undo2, Redo2, Eye, Trash2, Monitor, ZoomIn, ZoomOut } from 'lucide-react'
+import { ArrowLeft, Undo2, Redo2, Eye, Trash2, Monitor, ZoomIn, ZoomOut, Type, Shapes } from 'lucide-react'
 import * as fabric from 'fabric'
-import { useAppStore, formSignature } from '@/store'
+import { useAppStore, decorationSignature } from '@/store'
 import { getAllDiyElements, TEMPLATES } from '@/data/tombstones'
 import { getCanvasPalette } from '@/data/story-mapping'
 import { DiyElementPanel } from '@/components/editor/DiyElementPanel'
+import { TombstoneVisual, type EditableField } from '@/components/tombstone/TombstoneVisual'
 import type { DiyElement, InscriptionForm } from '@/types'
 
 type Palette = { bg: string; fg: string; accent: string; border: string }
+
+/** 切换 fabric 叠层事件接收：文字模式透传给 DOM，装饰模式 fabric 接管。 */
+function applyEditMode(canvas: fabric.Canvas, mode: 'text' | 'decoration') {
+  const wrapper = canvas.wrapperEl
+  if (!wrapper) return
+  if (mode === 'text') {
+    canvas.discardActiveObject()
+    canvas.renderAll()
+    wrapper.style.pointerEvents = 'none'
+  } else {
+    wrapper.style.pointerEvents = 'auto'
+    canvas.calcOffset()
+  }
+}
+
+function modeTabClass(active: boolean) {
+  return [
+    'inline-flex h-8 items-center gap-1 rounded-md px-3 text-xs transition-base cursor-pointer',
+    active
+      ? 'bg-candle/15 text-candle'
+      : 'text-mist-dim hover:bg-ink-card hover:text-mist',
+  ].join(' ')
+}
 
 /** 故事流首次进入时，按装饰元素元数据在画布上生成一个 fabric 对象（位于 left/top） */
 function makeSeedObject(el: DiyElement, left: number, top: number, palette: Palette): fabric.Object {
@@ -34,187 +58,7 @@ function makeSeedObject(el: DiyElement, left: number, top: number, palette: Pale
   })
 }
 
-// 真实石材色（与 TombstoneVisual 保持一致）
-const STONE_BODY = '#d6d3d1'
-const STONE_DARK = '#a8a29e'
-const STONE_BORDER = '#78716c'
-
-/** 用原生 fabric 对象在画布上重建墓碑：碑身、圆球、标题、墓志铭等全部可编辑。
- *  替代此前把 TombstoneVisual 截图作底图的方案——现在内容不再被烤进图片。 */
-function seedTombstone(canvas: fabric.Canvas, form: InscriptionForm, palette: Palette) {
-  const tpl = TEMPLATES.find((t) => t.id === form.templateId) || TEMPLATES[0]
-
-  // 标题（生卒年/名字）
-  canvas.add(
-    new fabric.IText(form.lifespan || '佚 名', {
-      left: 540,
-      top: 130,
-      originX: 'center',
-      originY: 'center',
-      fontFamily: 'Noto Serif SC, serif',
-      fontSize: 56,
-      fill: palette.fg,
-      charSpacing: 300,
-      textAlign: 'center',
-    }),
-  )
-
-  // 副标题（模板名）
-  canvas.add(
-    new fabric.IText(tpl.name, {
-      left: 540,
-      top: 210,
-      originX: 'center',
-      originY: 'center',
-      fontFamily: 'Noto Sans SC, sans-serif',
-      fontSize: 22,
-      fill: palette.fg,
-      opacity: 0.7,
-      charSpacing: 100,
-      textAlign: 'center',
-    }),
-  )
-
-  // 装饰分隔线
-  canvas.add(
-    new fabric.Rect({
-      left: 440,
-      top: 268,
-      width: 200,
-      height: 2,
-      fill: palette.accent,
-    }),
-  )
-
-  // 墓碑碑身（圆顶石质）
-  canvas.add(
-    new fabric.Rect({
-      left: 290,
-      top: 345,
-      width: 500,
-      height: 660,
-      rx: 90,
-      ry: 90,
-      fill: new fabric.Gradient({
-        type: 'linear',
-        gradientUnits: 'percentage',
-        coords: { x1: 0, y1: 0, x2: 0, y2: 1 },
-        colorStops: [
-          { offset: 0, color: STONE_BODY },
-          { offset: 1, color: STONE_DARK },
-        ],
-      }),
-      stroke: STONE_BORDER,
-      strokeWidth: 3,
-      shadow: new fabric.Shadow({
-        color: 'rgba(28,25,23,0.18)',
-        blur: 40,
-        offsetX: 0,
-        offsetY: 12,
-      }),
-    }),
-  )
-
-  // 顶部圆球装饰（叠在碑身顶端）
-  canvas.add(
-    new fabric.Circle({
-      left: 540,
-      top: 330,
-      radius: 14,
-      originX: 'center',
-      originY: 'center',
-      fill: STONE_BODY,
-      stroke: STONE_BORDER,
-      strokeWidth: 2,
-    }),
-  )
-
-  // 墓志铭
-  canvas.add(
-    new fabric.IText(form.epitaph || '尚未撰写墓志铭', {
-      left: 540,
-      top: 600,
-      originX: 'center',
-      originY: 'center',
-      fontFamily: 'Noto Serif SC, serif',
-      fontSize: 36,
-      fill: palette.fg,
-      textAlign: 'center',
-    }),
-  )
-
-  // 数字遗产
-  if (form.digitalAssets.length > 0) {
-    canvas.add(
-      new fabric.IText(form.digitalAssets.map((a) => '· ' + a).join('\n'), {
-        left: 540,
-        top: 800,
-        originX: 'center',
-        originY: 'center',
-        fontFamily: 'Noto Serif SC, serif',
-        fontSize: 24,
-        fill: palette.fg,
-        opacity: 0.85,
-        textAlign: 'center',
-      }),
-    )
-  }
-
-  // 路过者寄语
-  if (form.passerbyMessage.trim()) {
-    canvas.add(
-      new fabric.IText('“' + form.passerbyMessage + '”', {
-        left: 540,
-        top: 920,
-        originX: 'center',
-        originY: 'center',
-        fontFamily: 'Noto Serif SC, serif',
-        fontSize: 24,
-        fill: palette.fg,
-        fontStyle: 'italic',
-        opacity: 0.8,
-        textAlign: 'center',
-      }),
-    )
-  }
-
-  // 底座
-  canvas.add(
-    new fabric.Rect({
-      left: 340,
-      top: 1010,
-      width: 400,
-      height: 14,
-      fill: STONE_DARK,
-    }),
-  )
-  canvas.add(
-    new fabric.Rect({
-      left: 390,
-      top: 1024,
-      width: 300,
-      height: 10,
-      fill: STONE_BORDER,
-      opacity: 0.6,
-    }),
-  )
-
-  // 底部页脚
-  canvas.add(
-    new fabric.IText('赛 博 墓 园 · CYBER GRAVEYARD', {
-      left: 540,
-      top: 1390,
-      originX: 'center',
-      originY: 'center',
-      fontFamily: 'Noto Sans SC, sans-serif',
-      fontSize: 18,
-      fill: palette.fg,
-      opacity: 0.4,
-      charSpacing: 400,
-      textAlign: 'center',
-    }),
-  )
-}
+// 真实石材色常量已废弃——碑身现由 DOM TombstoneVisual 渲染，全 CSS 保真。
 
 /** 已选装饰品按 3×3 网格摆放在墓碑下方 */
 function seedDecorations(canvas: fabric.Canvas, form: InscriptionForm, palette: Palette) {
@@ -239,8 +83,9 @@ export default function EditorPage() {
   // 避免逐对象回写 history 与预览图。组件级 ref，供 init effect 与 undo/redo 共享。
   const suppressSyncRef = useRef(false)
   const form = useAppStore((s) => s.form)
+  const setForm = useAppStore((s) => s.setForm)
   const canvasSnapshot = useAppStore((s) => s.canvasSnapshot)
-  const canvasFormSignature = useAppStore((s) => s.canvasFormSignature)
+  const canvasDecorationSignature = useAppStore((s) => s.canvasDecorationSignature)
   const pushHistory = useAppStore((s) => s.pushHistory)
   const setCanvasState = useAppStore((s) => s.setCanvasState)
   const undoAction = useAppStore((s) => s.undo)
@@ -253,6 +98,9 @@ export default function EditorPage() {
   const [scale, setScale] = useState(1)
   const [isFitView, setIsFitView] = useState(true)
   const [selectedCount, setSelectedCount] = useState(0)
+  const [editMode, setEditMode] = useState<'text' | 'decoration'>('decoration')
+
+  const template = TEMPLATES.find((t) => t.id === form.templateId) || TEMPLATES[0]
 
   const updateScale = useCallback(() => {
     const viewportWidth = window.innerWidth
@@ -270,19 +118,17 @@ export default function EditorPage() {
     }
   }, [isFitView])
 
-  // 初始化 fabric 画布
+  // 初始化 fabric 画布（透明叠层，不渲染碑身——碑身由下方 DOM TombstoneVisual 承担）
   useEffect(() => {
     if (!canvasRef.current) return
     const canvas = new fabric.Canvas(canvasRef.current, {
       width: 1080,
       height: 1440,
-      backgroundColor: '#f7f5f0',
+      backgroundColor: 'transparent',
       preserveObjectStacking: true,
     })
     fabricRef.current = canvas
 
-    // 同步画布状态到全局 store：历史（撤销/重做）+ 预览图（供预览页展示）
-    // 在恢复画布期间通过 suppressSyncRef 跳过，避免逐对象触发同步
     const syncSnapshot = () => {
       if (suppressSyncRef.current) return
       const json = JSON.stringify(canvas.toJSON())
@@ -290,10 +136,11 @@ export default function EditorPage() {
       setCanvasState(json, canvas.toDataURL())
     }
 
-    // 表单内容签名对比：相同则恢复用户已编辑的画布；
-    // 不同（首次进入，或回上一步修改过碑文/样式/装饰）则用原生 fabric 对象重建墓碑。
-    const currentSig = formSignature(form)
-    if (canvasSnapshot && currentSig === canvasFormSignature) {
+    // 装饰签名对比：相同则恢复用户已编辑的 fabric 装饰；
+    // 不同（首次进入，或回上一步改了装饰列表/文化形式/模板）则重新摆放装饰。
+    // 注意：文字改动不再触发重置——文字现由 DOM 渲染，受控于 store.form。
+    const currentSig = decorationSignature(form)
+    if (canvasSnapshot && currentSig === canvasDecorationSignature) {
       suppressSyncRef.current = true
       canvas.loadFromJSON(canvasSnapshot).then(() => {
         canvas.renderAll()
@@ -302,24 +149,22 @@ export default function EditorPage() {
       })
     } else {
       const palette = getCanvasPalette(form.formId, form.templateId)
-      canvas.backgroundColor = palette.bg
       suppressSyncRef.current = true
-      seedTombstone(canvas, form, palette)
       seedDecorations(canvas, form, palette)
       suppressSyncRef.current = false
       canvas.renderAll()
       syncSnapshot()
     }
 
+    // 初始模式应用
+    applyEditMode(canvas, editMode)
+
     updateScale()
     window.addEventListener('resize', updateScale)
 
-    // 监听选区变化
     canvas.on('selection:created', () => setSelectedCount(canvas.getActiveObjects().length))
     canvas.on('selection:updated', () => setSelectedCount(canvas.getActiveObjects().length))
     canvas.on('selection:cleared', () => setSelectedCount(0))
-
-    // 操作历史 + 预览同步
     canvas.on('object:added', syncSnapshot)
     canvas.on('object:modified', syncSnapshot)
     canvas.on('object:removed', syncSnapshot)
@@ -331,11 +176,31 @@ export default function EditorPage() {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [])
 
+  // 模式切换：翻转 fabric wrapperEl 的 pointerEvents
+  useEffect(() => {
+    const canvas = fabricRef.current
+    if (!canvas) return
+    applyEditMode(canvas, editMode)
+  }, [editMode])
+
   // 视图模式变化时重新计算缩放
   useEffect(() => {
     // eslint-disable-next-line
     updateScale()
   }, [isFitView, updateScale])
+
+  // 文字字段提交：写回 store.form，DOM 自然重渲染；canvas 装饰不受影响
+  const handleFieldChange = useCallback((field: EditableField, value: string) => {
+    if (field === 'lifespan') setForm({ lifespan: value })
+    else if (field === 'epitaph') setForm({ epitaph: value })
+    else if (field === 'passerbyMessage') setForm({ passerbyMessage: value })
+    else if (field.startsWith('digitalAssets.')) {
+      const idx = Number(field.split('.')[1])
+      const next = [...form.digitalAssets]
+      if (idx >= 0 && idx < next.length) next[idx] = value
+      setForm({ digitalAssets: next })
+    }
+  }, [form.digitalAssets, setForm])
 
   const handleAddElement = (elementType: string, content: string) => {
     const canvas = fabricRef.current
@@ -345,6 +210,9 @@ export default function EditorPage() {
       handleUploadImage()
       return
     }
+
+    // 添加新装饰时强制切到装饰模式，否则对象看不到也选不中
+    if (editMode !== 'decoration') setEditMode('decoration')
 
     let obj: fabric.Object
     if (elementType === 'text') {
@@ -512,6 +380,10 @@ export default function EditorPage() {
       const canvas = fabricRef.current
       if (!canvas) return
 
+      // 用户正在 contentEditable 文字里编辑时，禁用所有快捷键
+      const activeEl = document.activeElement
+      if (activeEl && (activeEl as HTMLElement).isContentEditable) return
+
       if ((e.key === 'Delete' || e.key === 'Backspace') && selectedCount > 0) {
         e.preventDefault()
         handleDelete()
@@ -616,22 +488,67 @@ export default function EditorPage() {
           className="relative overflow-auto rounded-xl border border-ink-border bg-ink-card/40 p-3 shadow-tomb sm:p-4"
           aria-label="编辑画布"
         >
+          {/* 文字/装饰模式切换 */}
+          <div className="mb-3 flex items-center justify-center gap-1 rounded-lg border border-ink-border bg-ink-card/60 p-1">
+            <button
+              type="button"
+              onClick={() => setEditMode('text')}
+              className={modeTabClass(editMode === 'text')}
+            >
+              <Type className="h-3.5 w-3.5" aria-hidden="true" />
+              文字
+            </button>
+            <button
+              type="button"
+              onClick={() => setEditMode('decoration')}
+              className={modeTabClass(editMode === 'decoration')}
+            >
+              <Shapes className="h-3.5 w-3.5" aria-hidden="true" />
+              装饰
+            </button>
+          </div>
+
           <div
             className="relative mx-auto rounded border border-ink-border shadow-tomb-lg"
             style={{
-              transform: `scale(${scale})`,
-              transformOrigin: 'top center',
               width: 1080,
               height: 1440,
+              isolation: 'isolate',
+              transform: `scale(${scale})`,
+              transformOrigin: 'top center',
             }}
           >
-            <canvas ref={canvasRef} width={1080} height={1440} />
+            {/* 底层：DOM 墓碑（全 CSS 保真，文字可编辑） */}
+            <div className="absolute inset-0 z-10" style={{ width: 1080, height: 1440 }}>
+              <TombstoneVisual
+                template={template.category}
+                title={form.lifespan || '佚 名'}
+                subtitle={template.name}
+                epitaph={form.epitaph}
+                passerbyMessage={form.passerbyMessage}
+                digitalAssets={form.digitalAssets}
+                craft={template.category === 'heritage' ? template.id : undefined}
+                editable
+                onFieldChange={handleFieldChange}
+                height={1440}
+              />
+            </div>
+
+            {/* 顶层：透明 fabric 叠层，只承载装饰 */}
+            <canvas
+              ref={canvasRef}
+              width={1080}
+              height={1440}
+              className="absolute inset-0 z-20"
+            />
           </div>
 
           <div className="mt-3 flex items-center justify-center gap-2 text-center text-[11px] text-mist-dim">
             <span>画布尺寸 1080 × 1440</span>
             <span className="text-mist-muted" aria-hidden="true">·</span>
             <span className="tabular-nums">{scalePercent}%</span>
+            <span className="text-mist-muted" aria-hidden="true">·</span>
+            <span>{editMode === 'text' ? '文字编辑模式' : '装饰编辑模式'}</span>
             {selectedCount > 0 && (
               <>
                 <span className="text-mist-muted" aria-hidden="true">·</span>

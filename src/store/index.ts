@@ -9,19 +9,11 @@ import type { InscriptionForm } from '@/types'
 
 const MAX_HISTORY = 20
 
-/** 计算碑文表单内容签名，用于判断编辑器是否需要重新生成。
- *  当用户回上一步修改了碑文/样式/装饰后，签名变化 → 编辑器重新生成墓碑。 */
-export function formSignature(form: InscriptionForm): string {
-  return JSON.stringify([
-    form.epitaph,
-    form.lifespan,
-    form.digitalAssets,
-    form.passerbyMessage,
-    form.templateId,
-    form.formId,
-    form.regionId,
-    form.decorationIds,
-  ])
+/** 计算装饰相关字段签名，用于判断 fabric 叠层是否需要重新生成。
+ *  文字内容（epitaph/lifespan/...）现由 DOM 渲染，不再影响 canvas；
+ *  仅当装饰列表/文化形式/模板变化时才需重排 fabric 装饰。 */
+export function decorationSignature(form: InscriptionForm): string {
+  return JSON.stringify([form.decorationIds, form.formId, form.templateId])
 }
 
 interface AppState {
@@ -46,8 +38,8 @@ interface AppState {
   canvasSnapshot: string
   /** 画布的 PNG data URL，供预览页直接展示与导出 */
   canvasPreview: string
-  /** 生成 canvasSnapshot 时的表单签名；若与当前表单签名不一致，编辑器需重新生成 */
-  canvasFormSignature: string
+  /** 生成 canvasSnapshot 时的装饰签名；若与当前装饰签名不一致，编辑器需重新生成 fabric 装饰 */
+  canvasDecorationSignature: string
   setCanvasState: (json: string, preview: string) => void
 
   /* —— 顶部安全条 / 底部援助条 —— */
@@ -78,7 +70,7 @@ export const useAppStore = create<AppState>((set, get) => ({
       historyIndex: -1,
       canvasSnapshot: '',
       canvasPreview: '',
-      canvasFormSignature: '',
+      canvasDecorationSignature: '',
       storyStep: 1,
     }),
 
@@ -108,12 +100,12 @@ export const useAppStore = create<AppState>((set, get) => ({
 
   canvasSnapshot: '',
   canvasPreview: '',
-  canvasFormSignature: '',
+  canvasDecorationSignature: '',
   setCanvasState: (json, preview) =>
     set((s) => ({
       canvasSnapshot: json,
       canvasPreview: preview,
-      canvasFormSignature: formSignature(s.form),
+      canvasDecorationSignature: decorationSignature(s.form),
     })),
 
   storyStep: 1,
