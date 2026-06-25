@@ -3,7 +3,7 @@ import { Link } from 'react-router-dom'
 import { ArrowLeft, Undo2, Redo2, Eye, Trash2, Monitor, ZoomIn, ZoomOut } from 'lucide-react'
 import * as fabric from 'fabric'
 import { useAppStore } from '@/store'
-import { DIY_ELEMENTS } from '@/data/tombstones'
+import { getAllDiyElements } from '@/data/tombstones'
 import { DiyElementPanel } from '@/components/editor/DiyElementPanel'
 
 export default function EditorPage() {
@@ -357,7 +357,7 @@ export default function EditorPage() {
 
       <div className="grid grid-cols-1 gap-4 lg:grid-cols-[300px_1fr]">
         {/* 左侧组件库 */}
-        <DiyElementPanel onAdd={handleAddElement} elements={DIY_ELEMENTS} />
+        <DiyElementPanel onAdd={handleAddElement} elements={getAllDiyElements()} />
 
         {/* 右侧画布 */}
         <section

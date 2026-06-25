@@ -18,6 +18,10 @@ const CATEGORIES: { key: TemplateCategory | 'all'; label: string }[] = [
   { key: 'heritage', label: '非遗工艺' },
   { key: 'literary', label: '文学 IP' },
   { key: 'minimal', label: '极简现代' },
+  { key: 'anime', label: '二次元痛墓' },
+  { key: 'gamer', label: '玩家重生' },
+  { key: 'meme', label: '整活抽象' },
+  { key: 'pop', label: '潮玩流行' },
 ]
 
 export function TemplatePicker({ selected, onSelect }: TemplatePickerProps) {

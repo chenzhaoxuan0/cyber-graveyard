@@ -3,7 +3,7 @@
  */
 
 /** 模板大类 */
-export type TemplateCategory = 'heritage' | 'literary' | 'minimal'
+export type TemplateCategory = 'heritage' | 'literary' | 'minimal' | 'anime' | 'gamer' | 'meme' | 'pop'
 
 /** 墓碑模板元数据 */
 export interface TombstoneTemplate {
@@ -21,6 +21,10 @@ export interface TombstoneTemplate {
   }
   /** 模板视觉风格标识，用于渲染层选择 */
   style: 'stone-classic' | 'brick-huizhou' | 'stele-suzhou' | 'silver-miao' | 'lacquer-yi' | 'literary-dumbledore' | 'literary-daiyu' | 'literary-prince' | 'literary-wukong' | 'literary-quixote' | 'minimal-white' | 'minimal-black' | 'minimal-jade'
+    | 'anime-idol' | 'anime-mahou' | 'anime-evangelion' | 'anime-slayer' | 'anime-isekai'
+    | 'gamer-bonfire' | 'gamer-pixel' | 'gamer-cyberpunk' | 'gamer-summon' | 'gamer-retro'
+    | 'meme-code' | 'meme-404' | 'meme-bsod' | 'meme-abstract' | 'meme-workplace'
+    | 'pop-lego' | 'pop-bubbletea' | 'pop-cat' | 'pop-neon' | 'pop-glitter'
   /** 缩略图（CSS 渐变或 SVG data URI） */
   thumbnail: string
 }
@@ -74,6 +78,7 @@ export interface InscriptionForm {
 
 /** DIY 装饰元素类型 */
 export type DiyElementType = 'text' | 'pattern' | 'heritage' | 'qrcode' | 'image' | 'link'
+  | 'badge' | 'standee' | 'glowstick' | 'achievement' | 'danmaku' | 'emoji' | 'glitter' | 'neon'
 
 /** DIY 装饰元素（fabric.js 对象的元数据） */
 export interface DiyElement {
