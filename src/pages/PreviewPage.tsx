@@ -1,4 +1,4 @@
-import { useRef, useState } from 'react'
+import { useRef, useState, useEffect } from 'react'
 import { Link } from 'react-router-dom'
 import { ArrowLeft, Film, Image as ImageIcon, Sparkles } from 'lucide-react'
 import { useAppStore } from '@/store'
@@ -12,8 +12,20 @@ export default function PreviewPage() {
   const canvasPreview = useAppStore((s) => s.canvasPreview)
   const previewRef = useRef<HTMLDivElement>(null)
   const [exporting, setExporting] = useState<'image' | 'video' | null>(null)
+  const [previewScale, setPreviewScale] = useState(1)
 
   const template = TEMPLATES.find((t) => t.id === form.templateId) || TEMPLATES[0]
+
+  // 预览自适应：根据容器宽度缩放，无需缩放浏览器即可看全
+  useEffect(() => {
+    const updateScale = () => {
+      const containerWidth = previewRef.current?.parentElement?.clientWidth || Math.max(320, window.innerWidth - 32)
+      setPreviewScale(Math.min(1, containerWidth / 1080))
+    }
+    updateScale()
+    window.addEventListener('resize', updateScale)
+    return () => window.removeEventListener('resize', updateScale)
+  }, [])
 
   const handleExportImage = async () => {
     if (!previewRef.current || exporting) return
@@ -58,11 +70,23 @@ export default function PreviewPage() {
       {/* 墓碑预览（导出目标）：永远渲染 DOM 墓碑；有装饰快照时叠加透明 PNG */}
       <div className="mb-6 flex justify-center">
         <div
-          ref={previewRef}
-          className="w-full overflow-hidden rounded-md border border-ink-border bg-ink-card/40 shadow-tomb-lg"
-          style={{ width: 1080, maxWidth: '100%', isolation: 'isolate' }}
+          className="relative"
+          style={{
+            width: 1080 * previewScale,
+            height: 1440 * previewScale,
+          }}
         >
-          <div className="relative" style={{ width: 1080, height: 1440 }}>
+          <div
+            ref={previewRef}
+            className="absolute left-0 top-0 overflow-hidden rounded-md border border-ink-border bg-ink-card/40 shadow-tomb-lg"
+            style={{
+              width: 1080,
+              height: 1440,
+              transform: `scale(${previewScale})`,
+              transformOrigin: 'top left',
+              isolation: 'isolate',
+            }}
+          >
             <div className="absolute inset-0 z-10">
               <TombstoneVisual
                 template={template.category}

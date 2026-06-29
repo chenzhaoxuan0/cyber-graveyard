@@ -79,6 +79,7 @@ function seedDecorations(canvas: fabric.Canvas, form: InscriptionForm, palette: 
 export default function EditorPage() {
   const canvasRef = useRef<HTMLCanvasElement>(null)
   const fabricRef = useRef<fabric.Canvas | null>(null)
+  const sectionRef = useRef<HTMLElement>(null)
   // 在恢复画布（loadFromJSON）期间抑制 object:* 事件触发的 syncSnapshot，
   // 避免逐对象回写 history 与预览图。组件级 ref，供 init effect 与 undo/redo 共享。
   const suppressSyncRef = useRef(false)
@@ -103,16 +104,20 @@ export default function EditorPage() {
   const template = TEMPLATES.find((t) => t.id === form.templateId) || TEMPLATES[0]
 
   const updateScale = useCallback(() => {
-    const viewportWidth = window.innerWidth
-    const containerPadding = 32
-    const availableWidth = viewportWidth - containerPadding
+    if (!isFitView) {
+      setScale(1)
+      return
+    }
 
-    if (isFitView && availableWidth < 1080) {
+    // 优先以画布区域实际可用宽度计算，避免 grid 侧边栏导致估算不准
+    const sectionWidth = sectionRef.current?.clientWidth
+    const containerPadding = 32
+    const availableWidth = sectionWidth
+      ? sectionWidth - containerPadding
+      : window.innerWidth - containerPadding
+
+    if (availableWidth < 1080) {
       setScale(Math.max(0.35, (availableWidth - 32) / 1080))
-    } else if (isFitView && viewportWidth < 1280) {
-      // lg breakpoint: left sidebar 280px + gap 16px + padding
-      const lgAvailableWidth = viewportWidth - 280 - 16 - containerPadding
-      setScale(Math.max(0.45, (lgAvailableWidth - 32) / 1080))
     } else {
       setScale(1)
     }
@@ -133,7 +138,7 @@ export default function EditorPage() {
       if (suppressSyncRef.current) return
       const json = JSON.stringify(canvas.toJSON())
       pushHistory(json)
-      setCanvasState(json, canvas.toDataURL())
+      setCanvasState(json, canvas.toDataURL({ multiplier: 2 }))
     }
 
     // 装饰签名对比：相同则恢复用户已编辑的 fabric 装饰；
@@ -145,7 +150,7 @@ export default function EditorPage() {
       canvas.loadFromJSON(canvasSnapshot).then(() => {
         canvas.renderAll()
         suppressSyncRef.current = false
-        setCanvasState(canvasSnapshot, canvas.toDataURL())
+        setCanvasState(canvasSnapshot, canvas.toDataURL({ multiplier: 2 }))
       })
     } else {
       const palette = getCanvasPalette(form.formId, form.templateId)
@@ -344,7 +349,7 @@ export default function EditorPage() {
       canvas.loadFromJSON(snapshot).then(() => {
         canvas.renderAll()
         suppressSyncRef.current = false
-        setCanvasState(snapshot, canvas.toDataURL())
+        setCanvasState(snapshot, canvas.toDataURL({ multiplier: 2 }))
       })
     }
   }
@@ -358,7 +363,7 @@ export default function EditorPage() {
       canvas.loadFromJSON(snapshot).then(() => {
         canvas.renderAll()
         suppressSyncRef.current = false
-        setCanvasState(snapshot, canvas.toDataURL())
+        setCanvasState(snapshot, canvas.toDataURL({ multiplier: 2 }))
       })
     }
   }
@@ -485,6 +490,7 @@ export default function EditorPage() {
 
         {/* 右侧画布 */}
         <section
+          ref={sectionRef}
           className="relative overflow-auto rounded-xl border border-ink-border bg-ink-card/40 p-3 shadow-tomb sm:p-4"
           aria-label="编辑画布"
         >
@@ -508,39 +514,50 @@ export default function EditorPage() {
             </button>
           </div>
 
-          <div
-            className="relative mx-auto rounded border border-ink-border shadow-tomb-lg"
-            style={{
-              width: 1080,
-              height: 1440,
-              isolation: 'isolate',
-              transform: `scale(${scale})`,
-              transformOrigin: 'top center',
-            }}
-          >
-            {/* 底层：DOM 墓碑（全 CSS 保真，文字可编辑） */}
-            <div className="absolute inset-0 z-10" style={{ width: 1080, height: 1440 }}>
-              <TombstoneVisual
-                template={template.category}
-                title={form.lifespan || '佚 名'}
-                subtitle={template.name}
-                epitaph={form.epitaph}
-                passerbyMessage={form.passerbyMessage}
-                digitalAssets={form.digitalAssets}
-                craft={template.category === 'heritage' ? template.id : undefined}
-                editable
-                onFieldChange={handleFieldChange}
-                height={1440}
-              />
-            </div>
+          {/* 缩放包装：外层尺寸跟随缩放比例，保证居中且不出滚动条 */}
+          <div className="flex justify-center">
+            <div
+              className="relative"
+              style={{
+                width: 1080 * scale,
+                height: 1440 * scale,
+              }}
+            >
+              <div
+                className="absolute left-0 top-0 rounded border border-ink-border shadow-tomb-lg"
+                style={{
+                  width: 1080,
+                  height: 1440,
+                  isolation: 'isolate',
+                  transform: `scale(${scale})`,
+                  transformOrigin: 'top left',
+                }}
+              >
+                {/* 底层：DOM 墓碑（全 CSS 保真，文字可编辑） */}
+                <div className="absolute inset-0 z-10" style={{ width: 1080, height: 1440 }}>
+                  <TombstoneVisual
+                    template={template.category}
+                    title={form.lifespan || '佚 名'}
+                    subtitle={template.name}
+                    epitaph={form.epitaph}
+                    passerbyMessage={form.passerbyMessage}
+                    digitalAssets={form.digitalAssets}
+                    craft={template.category === 'heritage' ? template.id : undefined}
+                    editable
+                    onFieldChange={handleFieldChange}
+                    height={1440}
+                  />
+                </div>
 
-            {/* 顶层：透明 fabric 叠层，只承载装饰 */}
-            <canvas
-              ref={canvasRef}
-              width={1080}
-              height={1440}
-              className="absolute inset-0 z-20"
-            />
+                {/* 顶层：透明 fabric 叠层，只承载装饰 */}
+                <canvas
+                  ref={canvasRef}
+                  width={1080}
+                  height={1440}
+                  className="absolute inset-0 z-20"
+                />
+              </div>
+            </div>
           </div>
 
           <div className="mt-3 flex items-center justify-center gap-2 text-center text-[11px] text-mist-dim">
